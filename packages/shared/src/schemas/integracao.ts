@@ -6,6 +6,7 @@ import {
   textoObrigatorio,
   textoOpcional,
   valorMonetario,
+  dataTexto,
 } from './comum';
 
 // =====================================================================
@@ -75,8 +76,8 @@ export const listarLogsIntegracaoSchema = paginacaoSchema.extend({
     .optional()
     .transform((v) => (v === undefined ? undefined : v === 'true')),
   direcao: z.enum(['ENTRADA', 'SAIDA']).optional(),
-  dataInicio: z.coerce.date().optional(),
-  dataFim: z.coerce.date().optional(),
+  dataInicio: dataTexto.optional(),
+  dataFim: dataTexto.optional(),
 });
 
 // =====================================================================

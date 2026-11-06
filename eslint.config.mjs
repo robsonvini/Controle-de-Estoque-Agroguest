@@ -1,7 +1,9 @@
 import js from '@eslint/js';
-import tseslint from 'typescript-eslint';
+import nextPlugin from '@next/eslint-plugin-next';
 import prettier from 'eslint-config-prettier';
+import reactHooks from 'eslint-plugin-react-hooks';
 import globals from 'globals';
+import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   {
@@ -9,11 +11,13 @@ export default tseslint.config(
       '**/node_modules/**',
       '**/dist/**',
       '**/.next/**',
+      '**/.next-e2e/**',
       '**/coverage/**',
       'apps/api/src/generated/**',
-      'apps/web/next-env.d.ts',
+      '**/next-env.d.ts',
       '**/playwright-report/**',
       '**/test-results/**',
+      'infra/terraform/**',
     ],
   },
   js.configs.recommended,
@@ -27,13 +31,27 @@ export default tseslint.config(
         'error',
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' },
       ],
-      '@typescript-eslint/consistent-type-imports': 'off',
       'no-console': ['warn', { allow: ['warn', 'error'] }],
     },
   },
   {
-    files: ['tools/**', '**/scripts/**', '**/prisma/seed.ts', 'tests/**'],
+    files: ['apps/web/**/*.{ts,tsx}'],
+    plugins: { 'react-hooks': reactHooks, '@next/next': nextPlugin },
+    settings: { next: { rootDir: 'apps/web' } },
+    rules: {
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'warn',
+      ...nextPlugin.configs.recommended.rules,
+      ...nextPlugin.configs['core-web-vitals'].rules,
+    },
+  },
+  {
+    files: ['tools/**', '**/scripts/**', '**/prisma/seed.ts', 'tests/**', '**/e2e/**'],
     rules: { 'no-console': 'off' },
+  },
+  {
+    files: ['**/*.spec.ts', '**/*.test.ts', '**/test/**'],
+    rules: { '@typescript-eslint/no-explicit-any': 'off' },
   },
   prettier,
 );

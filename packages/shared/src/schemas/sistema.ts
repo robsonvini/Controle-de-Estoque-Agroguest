@@ -5,7 +5,7 @@ import {
   TIPOS_NOTIFICACAO,
   TIPOS_RELATORIO,
 } from '../enums';
-import { idSchema, paginacaoSchema } from './comum';
+import { dataTexto, idSchema, paginacaoSchema } from './comum';
 
 const horario = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, 'Use o formato HH:MM');
 
@@ -49,8 +49,8 @@ export const CONFIGURACOES_PADRAO: ConfiguracoesSistema = configuracoesSistemaSc
 
 export const filtroRelatorioSchema = z
   .object({
-    dataInicio: z.coerce.date().optional(),
-    dataFim: z.coerce.date().optional(),
+    dataInicio: dataTexto.optional(),
+    dataFim: dataTexto.optional(),
     produtoId: idSchema.optional(),
     categoriaId: idSchema.optional(),
     fornecedorId: idSchema.optional(),
@@ -81,8 +81,8 @@ export const listarAuditoriaSchema = paginacaoSchema.extend({
   usuarioId: idSchema.optional(),
   entidade: z.string().max(60).optional(),
   acao: z.string().max(60).optional(),
-  dataInicio: z.coerce.date().optional(),
-  dataFim: z.coerce.date().optional(),
+  dataInicio: dataTexto.optional(),
+  dataFim: dataTexto.optional(),
 });
 
 export const titularLgpdSchema = z

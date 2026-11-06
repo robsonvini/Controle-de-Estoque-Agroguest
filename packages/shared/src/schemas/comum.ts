@@ -1,5 +1,15 @@
 import { z } from 'zod';
 
+/**
+ * Data recebida como texto ISO 8601 (formato do JSON) e convertida para Date.
+ * Representável em JSON Schema/OpenAPI como string, ao contrário de z.coerce.date().
+ */
+export const dataTexto = z
+  .string({ error: 'Data inválida' })
+  .trim()
+  .refine((s) => !Number.isNaN(Date.parse(s)), 'Data inválida')
+  .transform((s) => new Date(s));
+
 /** Texto obrigatório, sem espaços nas pontas. */
 export const textoObrigatorio = (max: number) =>
   z.string().trim().min(1, 'Campo obrigatório').max(max, `Máximo de ${max} caracteres`);
@@ -61,8 +71,7 @@ export const telefoneOpcional = z
   .transform((v) => (v ? v : null));
 
 /** Data/hora opcional; não pode estar no futuro (tolerância de 5 minutos). */
-export const dataHoraNaoFutura = z.coerce
-  .date({ error: 'Data inválida' })
+export const dataHoraNaoFutura = dataTexto
   .refine((d) => d.getTime() <= Date.now() + 5 * 60_000, 'A data não pode estar no futuro')
   .optional();
 
@@ -90,8 +99,8 @@ export const booleanoQuery = z
 
 export const periodoSchema = z
   .object({
-    dataInicio: z.coerce.date({ error: 'Data inicial inválida' }).optional(),
-    dataFim: z.coerce.date({ error: 'Data final inválida' }).optional(),
+    dataInicio: dataTexto.optional(),
+    dataFim: dataTexto.optional(),
   })
   .refine((p) => !p.dataInicio || !p.dataFim || p.dataInicio <= p.dataFim, {
     message: 'A data inicial deve ser anterior à data final',
