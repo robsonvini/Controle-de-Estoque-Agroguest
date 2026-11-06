@@ -23,7 +23,7 @@ services:
           name: estoque-db
           property: connectionString
       - key: WEB_ORIGIN
-        value: https://estoque-web.onrender.com
+        value: https://estoque-web-fyeb.onrender.com
       - key: TRUST_PROXY
         value: 'true'
       - key: COOKIE_SECURE
@@ -56,4 +56,4 @@ services:
     healthCheckPath: /login
     envVars:
       - key: API_INTERNAL_URL
-        value: https://estoque-api.onrender.com
+        value: https://estoque-api-oic6.onrender.com
