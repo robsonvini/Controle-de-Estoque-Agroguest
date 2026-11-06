@@ -40,3 +40,4 @@ Thumbs.db
 
 # Build do Next usado pelos testes E2E
 .next-e2e/
+infra/terraform/.cache/

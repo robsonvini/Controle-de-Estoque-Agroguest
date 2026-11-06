@@ -6,3 +6,6 @@ package-lock.json
 apps/api/src/generated
 apps/api/prisma/migrations
 infra/terraform/**/.terraform
+infra/terraform
+docs/openapi.json
+.next-e2e

@@ -1,0 +1,7 @@
+# Copie para terraform.tfvars (não versionado) e ajuste.
+dominio             = "estoque.agrogest.com.br"
+zona_route53_id     = "Z0000000000000000000"
+crm_base_url        = "https://crm.agrogest.com.br"
+email_alertas       = "infra@agrogest.com.br"
+email_admin_inicial = "admin@agrogest.com.br"
+email_remetente     = "Estoque Agrogest <estoque@agrogest.com.br>"

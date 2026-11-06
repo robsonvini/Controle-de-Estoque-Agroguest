@@ -14,6 +14,7 @@ const csp = [
   "font-src 'self'",
   "connect-src 'self'",
   "frame-ancestors 'none'",
+  "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
 ].join('; ');

@@ -1,0 +1,6502 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/health": {
+      "get": {
+        "operationId": "HealthController_vivo",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Saúde"
+        ]
+      }
+    },
+    "/api/health/pronto": {
+      "get": {
+        "operationId": "HealthController_pronto",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Saúde"
+        ]
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "operationId": "AuthController_login_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Autenticação"
+        ]
+      }
+    },
+    "/api/v1/auth/refresh": {
+      "post": {
+        "operationId": "AuthController_refresh_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Autenticação"
+        ]
+      }
+    },
+    "/api/v1/auth/logout": {
+      "post": {
+        "operationId": "AuthController_logout_v1",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Autenticação"
+        ]
+      }
+    },
+    "/api/v1/auth/me": {
+      "get": {
+        "operationId": "AuthController_me_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Autenticação"
+        ]
+      }
+    },
+    "/api/v1/auth/trocar-senha": {
+      "post": {
+        "operationId": "AuthController_trocarSenha_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrocarSenhaDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Autenticação"
+        ]
+      }
+    },
+    "/api/v1/auth/sessoes": {
+      "get": {
+        "operationId": "AuthController_sessoes_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Autenticação"
+        ]
+      }
+    },
+    "/api/v1/auth/sessoes/{id}": {
+      "delete": {
+        "operationId": "AuthController_revogarSessao_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Autenticação"
+        ]
+      }
+    },
+    "/api/v1/usuarios": {
+      "get": {
+        "operationId": "UsuariosController_listar_v1",
+        "parameters": [
+          {
+            "name": "pagina",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 9007199254740991,
+              "default": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "porPagina",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 200,
+              "default": 20,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "ordenarPor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 50,
+              "type": "string"
+            }
+          },
+          {
+            "name": "ordem",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "asc",
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
+            "name": "busca",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 120,
+              "type": "string"
+            }
+          },
+          {
+            "name": "perfilId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "type": "string"
+            }
+          },
+          {
+            "name": "ativo",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Usuários e permissões"
+        ]
+      },
+      "post": {
+        "operationId": "UsuariosController_criar_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CriarUsuarioDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Usuários e permissões"
+        ]
+      }
+    },
+    "/api/v1/usuarios/{id}": {
+      "get": {
+        "operationId": "UsuariosController_obter_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Usuários e permissões"
+        ]
+      },
+      "patch": {
+        "operationId": "UsuariosController_atualizar_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AtualizarUsuarioDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Usuários e permissões"
+        ]
+      }
+    },
+    "/api/v1/usuarios/{id}/redefinir-senha": {
+      "post": {
+        "operationId": "UsuariosController_redefinirSenha_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RedefinirSenhaDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Usuários e permissões"
+        ]
+      }
+    },
+    "/api/v1/usuarios/{id}/desbloquear": {
+      "post": {
+        "operationId": "UsuariosController_desbloquear_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Usuários e permissões"
+        ]
+      }
+    },
+    "/api/v1/perfis": {
+      "get": {
+        "operationId": "PerfisController_listar_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Usuários e permissões"
+        ]
+      },
+      "post": {
+        "operationId": "PerfisController_criar_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PerfilDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Usuários e permissões"
+        ]
+      }
+    },
+    "/api/v1/perfis/permissoes": {
+      "get": {
+        "operationId": "PerfisController_permissoes_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Usuários e permissões"
+        ]
+      }
+    },
+    "/api/v1/perfis/{id}": {
+      "get": {
+        "operationId": "PerfisController_obter_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Usuários e permissões"
+        ]
+      },
+      "put": {
+        "operationId": "PerfisController_atualizar_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PerfilDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Usuários e permissões"
+        ]
+      },
+      "delete": {
+        "operationId": "PerfisController_excluir_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Usuários e permissões"
+        ]
+      }
+    },
+    "/api/v1/categorias": {
+      "get": {
+        "operationId": "CategoriasController_listar_v1",
+        "parameters": [
+          {
+            "name": "pagina",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 9007199254740991,
+              "default": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "porPagina",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 200,
+              "default": 20,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "ordenarPor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 50,
+              "type": "string"
+            }
+          },
+          {
+            "name": "ordem",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "asc",
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
+            "name": "busca",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 120,
+              "type": "string"
+            }
+          },
+          {
+            "name": "ativo",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Categorias"
+        ]
+      },
+      "post": {
+        "operationId": "CategoriasController_criar_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CategoriaDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Categorias"
+        ]
+      }
+    },
+    "/api/v1/categorias/arvore": {
+      "get": {
+        "operationId": "CategoriasController_arvore_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Categorias"
+        ]
+      }
+    },
+    "/api/v1/categorias/{id}": {
+      "get": {
+        "operationId": "CategoriasController_obter_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Categorias"
+        ]
+      },
+      "put": {
+        "operationId": "CategoriasController_atualizar_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CategoriaDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Categorias"
+        ]
+      },
+      "delete": {
+        "operationId": "CategoriasController_excluir_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Categorias"
+        ]
+      }
+    },
+    "/api/v1/unidades": {
+      "get": {
+        "operationId": "UnidadesController_listar_v1",
+        "parameters": [
+          {
+            "name": "pagina",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 9007199254740991,
+              "default": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "porPagina",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 200,
+              "default": 20,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "ordenarPor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 50,
+              "type": "string"
+            }
+          },
+          {
+            "name": "ordem",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "asc",
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
+            "name": "busca",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 120,
+              "type": "string"
+            }
+          },
+          {
+            "name": "ativo",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Unidades de medida"
+        ]
+      },
+      "post": {
+        "operationId": "UnidadesController_criar_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UnidadeMedidaDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Unidades de medida"
+        ]
+      }
+    },
+    "/api/v1/unidades/{id}": {
+      "put": {
+        "operationId": "UnidadesController_atualizar_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UnidadeMedidaDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Unidades de medida"
+        ]
+      },
+      "delete": {
+        "operationId": "UnidadesController_excluir_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Unidades de medida"
+        ]
+      }
+    },
+    "/api/v1/locais": {
+      "get": {
+        "operationId": "LocaisController_listar_v1",
+        "parameters": [
+          {
+            "name": "pagina",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 9007199254740991,
+              "default": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "porPagina",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 200,
+              "default": 20,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "ordenarPor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 50,
+              "type": "string"
+            }
+          },
+          {
+            "name": "ordem",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "asc",
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
+            "name": "busca",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 120,
+              "type": "string"
+            }
+          },
+          {
+            "name": "ativo",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Locais de armazenamento"
+        ]
+      },
+      "post": {
+        "operationId": "LocaisController_criar_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LocalDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Locais de armazenamento"
+        ]
+      }
+    },
+    "/api/v1/locais/{id}": {
+      "get": {
+        "operationId": "LocaisController_obter_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Locais de armazenamento"
+        ]
+      },
+      "put": {
+        "operationId": "LocaisController_atualizar_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LocalDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Locais de armazenamento"
+        ]
+      },
+      "delete": {
+        "operationId": "LocaisController_excluir_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Locais de armazenamento"
+        ]
+      }
+    },
+    "/api/v1/produtos": {
+      "get": {
+        "operationId": "ProdutosController_listar_v1",
+        "parameters": [
+          {
+            "name": "pagina",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 9007199254740991,
+              "default": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "porPagina",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 200,
+              "default": 20,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "ordenarPor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 50,
+              "type": "string"
+            }
+          },
+          {
+            "name": "ordem",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "asc",
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
+            "name": "busca",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 120,
+              "type": "string"
+            }
+          },
+          {
+            "name": "categoriaId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "type": "string"
+            }
+          },
+          {
+            "name": "fornecedorId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ATIVO",
+                "INATIVO"
+              ]
+            }
+          },
+          {
+            "name": "situacaoEstoque",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "DISPONIVEL",
+                "BAIXO",
+                "ESGOTADO"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Produtos"
+        ]
+      },
+      "post": {
+        "operationId": "ProdutosController_criar_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProdutoDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Produtos"
+        ]
+      }
+    },
+    "/api/v1/produtos/codigo/{codigo}": {
+      "get": {
+        "operationId": "ProdutosController_porCodigo_v1",
+        "parameters": [
+          {
+            "name": "codigo",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Produtos"
+        ]
+      }
+    },
+    "/api/v1/produtos/{id}": {
+      "get": {
+        "operationId": "ProdutosController_obter_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Produtos"
+        ]
+      },
+      "put": {
+        "operationId": "ProdutosController_atualizar_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProdutoDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Produtos"
+        ]
+      }
+    },
+    "/api/v1/produtos/{id}/kardex": {
+      "get": {
+        "operationId": "ProdutosController_kardex_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "localId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Produtos"
+        ]
+      }
+    },
+    "/api/v1/produtos/{id}/imagens": {
+      "post": {
+        "operationId": "ProdutosController_adicionarImagem_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "arquivo",
+                  "textoAlternativo"
+                ],
+                "properties": {
+                  "arquivo": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "textoAlternativo": {
+                    "type": "string",
+                    "description": "Descrição da imagem para leitores de tela"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Produtos"
+        ]
+      }
+    },
+    "/api/v1/produtos/{id}/imagens/{imagemId}": {
+      "delete": {
+        "operationId": "ProdutosController_removerImagem_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "imagemId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Produtos"
+        ]
+      }
+    },
+    "/api/v1/fornecedores": {
+      "get": {
+        "operationId": "FornecedoresController_listar_v1",
+        "parameters": [
+          {
+            "name": "pagina",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 9007199254740991,
+              "default": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "porPagina",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 200,
+              "default": 20,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "ordenarPor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 50,
+              "type": "string"
+            }
+          },
+          {
+            "name": "ordem",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "asc",
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
+            "name": "busca",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 120,
+              "type": "string"
+            }
+          },
+          {
+            "name": "situacao",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ATIVO",
+                "INATIVO",
+                "BLOQUEADO"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Fornecedores"
+        ]
+      },
+      "post": {
+        "operationId": "FornecedoresController_criar_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FornecedorDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Fornecedores"
+        ]
+      }
+    },
+    "/api/v1/fornecedores/{id}": {
+      "get": {
+        "operationId": "FornecedoresController_obter_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Fornecedores"
+        ]
+      },
+      "put": {
+        "operationId": "FornecedoresController_atualizar_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FornecedorDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Fornecedores"
+        ]
+      }
+    },
+    "/api/v1/fornecedores/{id}/compras": {
+      "get": {
+        "operationId": "FornecedoresController_compras_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Fornecedores"
+        ]
+      }
+    },
+    "/api/v1/movimentacoes/entradas": {
+      "post": {
+        "operationId": "MovimentacoesController_entrada_v1",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Chave única da operação (8 a 100 caracteres). Repetições devolvem a resposta original.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EntradaDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Estoque e movimentações"
+        ]
+      }
+    },
+    "/api/v1/movimentacoes/saidas": {
+      "post": {
+        "operationId": "MovimentacoesController_saida_v1",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Chave única da operação (8 a 100 caracteres). Repetições devolvem a resposta original.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaidaDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Estoque e movimentações"
+        ]
+      }
+    },
+    "/api/v1/movimentacoes/transferencias": {
+      "post": {
+        "operationId": "MovimentacoesController_transferencia_v1",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Chave única da operação (8 a 100 caracteres). Repetições devolvem a resposta original.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransferenciaDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Estoque e movimentações"
+        ]
+      }
+    },
+    "/api/v1/movimentacoes/{id}/estorno": {
+      "post": {
+        "operationId": "MovimentacoesController_estornar_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Chave única da operação (8 a 100 caracteres). Repetições devolvem a resposta original.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EstornoDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Estoque e movimentações"
+        ]
+      }
+    },
+    "/api/v1/movimentacoes": {
+      "get": {
+        "operationId": "MovimentacoesController_listar_v1",
+        "parameters": [
+          {
+            "name": "pagina",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 9007199254740991,
+              "default": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "porPagina",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 200,
+              "default": 20,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "ordenarPor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 50,
+              "type": "string"
+            }
+          },
+          {
+            "name": "ordem",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "asc",
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
+            "name": "busca",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 120,
+              "type": "string"
+            }
+          },
+          {
+            "name": "tipo",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ENTRADA",
+                "SAIDA",
+                "TRANSFERENCIA",
+                "AJUSTE",
+                "ESTORNO"
+              ]
+            }
+          },
+          {
+            "name": "motivo",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "COMPRA",
+                "RECEBIMENTO",
+                "DEVOLUCAO_CLIENTE",
+                "AJUSTE_POSITIVO",
+                "VENDA",
+                "CONSUMO_INTERNO",
+                "PERDA",
+                "AVARIA",
+                "DEVOLUCAO_FORNECEDOR",
+                "AJUSTE_NEGATIVO",
+                "TRANSFERENCIA",
+                "AJUSTE_INVENTARIO",
+                "ESTORNO"
+              ]
+            }
+          },
+          {
+            "name": "produtoId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "type": "string"
+            }
+          },
+          {
+            "name": "localId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "type": "string"
+            }
+          },
+          {
+            "name": "fornecedorId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "type": "string"
+            }
+          },
+          {
+            "name": "clienteCrmId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "type": "string"
+            }
+          },
+          {
+            "name": "usuarioId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "type": "string"
+            }
+          },
+          {
+            "name": "dataInicio",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dataFim",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Estoque e movimentações"
+        ]
+      }
+    },
+    "/api/v1/movimentacoes/{id}": {
+      "get": {
+        "operationId": "MovimentacoesController_obter_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Estoque e movimentações"
+        ]
+      }
+    },
+    "/api/v1/estoque/saldos": {
+      "get": {
+        "operationId": "MovimentacoesController_saldos_v1",
+        "parameters": [
+          {
+            "name": "pagina",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 9007199254740991,
+              "default": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "porPagina",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 200,
+              "default": 20,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "ordenarPor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 50,
+              "type": "string"
+            }
+          },
+          {
+            "name": "ordem",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "asc",
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
+            "name": "busca",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 120,
+              "type": "string"
+            }
+          },
+          {
+            "name": "produtoId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "type": "string"
+            }
+          },
+          {
+            "name": "localId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "type": "string"
+            }
+          },
+          {
+            "name": "categoriaId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "type": "string"
+            }
+          },
+          {
+            "name": "somenteComSaldo",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Estoque e movimentações"
+        ]
+      }
+    },
+    "/api/v1/estoque/conciliacao": {
+      "get": {
+        "operationId": "MovimentacoesController_conciliacao_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Estoque e movimentações"
+        ]
+      }
+    },
+    "/api/v1/compras": {
+      "get": {
+        "operationId": "ComprasController_listar_v1",
+        "parameters": [
+          {
+            "name": "pagina",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 9007199254740991,
+              "default": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "porPagina",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 200,
+              "default": 20,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "ordenarPor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 50,
+              "type": "string"
+            }
+          },
+          {
+            "name": "ordem",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "asc",
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
+            "name": "busca",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 120,
+              "type": "string"
+            }
+          },
+          {
+            "name": "fornecedorId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "RASCUNHO",
+                "ENVIADO",
+                "PARCIALMENTE_RECEBIDO",
+                "RECEBIDO",
+                "CANCELADO"
+              ]
+            }
+          },
+          {
+            "name": "dataInicio",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dataFim",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Compras"
+        ]
+      },
+      "post": {
+        "operationId": "ComprasController_criar_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PedidoCompraDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Compras"
+        ]
+      }
+    },
+    "/api/v1/compras/{id}": {
+      "get": {
+        "operationId": "ComprasController_obter_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Compras"
+        ]
+      },
+      "put": {
+        "operationId": "ComprasController_atualizar_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PedidoCompraDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Compras"
+        ]
+      }
+    },
+    "/api/v1/compras/{id}/enviar": {
+      "post": {
+        "operationId": "ComprasController_enviar_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Compras"
+        ]
+      }
+    },
+    "/api/v1/compras/{id}/cancelar": {
+      "post": {
+        "operationId": "ComprasController_cancelar_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelamentoDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Compras"
+        ]
+      }
+    },
+    "/api/v1/compras/{id}/recebimentos": {
+      "post": {
+        "operationId": "ComprasController_receber_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecebimentoDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Compras"
+        ]
+      }
+    },
+    "/api/v1/pedidos": {
+      "get": {
+        "operationId": "PedidosController_listar_v1",
+        "parameters": [
+          {
+            "name": "pagina",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 9007199254740991,
+              "default": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "porPagina",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 200,
+              "default": 20,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "ordenarPor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 50,
+              "type": "string"
+            }
+          },
+          {
+            "name": "ordem",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "asc",
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
+            "name": "busca",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 120,
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "RESERVADO",
+                "CONFIRMADO",
+                "CANCELADO"
+              ]
+            }
+          },
+          {
+            "name": "origem",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "MANUAL",
+                "CRM_API"
+              ]
+            }
+          },
+          {
+            "name": "clienteCrmId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "type": "string"
+            }
+          },
+          {
+            "name": "dataInicio",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dataFim",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Pedidos de venda"
+        ]
+      },
+      "post": {
+        "operationId": "PedidosController_criar_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PedidoVendaDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Pedidos de venda"
+        ]
+      }
+    },
+    "/api/v1/pedidos/{id}": {
+      "get": {
+        "operationId": "PedidosController_obter_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Pedidos de venda"
+        ]
+      }
+    },
+    "/api/v1/pedidos/{id}/confirmar": {
+      "post": {
+        "operationId": "PedidosController_confirmar_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Pedidos de venda"
+        ]
+      }
+    },
+    "/api/v1/pedidos/{id}/cancelar": {
+      "post": {
+        "operationId": "PedidosController_cancelar_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelamentoDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Pedidos de venda"
+        ]
+      }
+    },
+    "/api/v1/inventarios": {
+      "get": {
+        "operationId": "InventariosController_listar_v1",
+        "parameters": [
+          {
+            "name": "pagina",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 9007199254740991,
+              "default": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "porPagina",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 200,
+              "default": 20,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "ordenarPor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 50,
+              "type": "string"
+            }
+          },
+          {
+            "name": "ordem",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "asc",
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
+            "name": "busca",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 120,
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "EM_CONTAGEM",
+                "EM_REVISAO",
+                "FINALIZADO",
+                "CANCELADO"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Inventário"
+        ]
+      },
+      "post": {
+        "operationId": "InventariosController_criar_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InventarioDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Inventário"
+        ]
+      }
+    },
+    "/api/v1/inventarios/{id}": {
+      "get": {
+        "operationId": "InventariosController_obter_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Inventário"
+        ]
+      }
+    },
+    "/api/v1/inventarios/{id}/contagens": {
+      "post": {
+        "operationId": "InventariosController_contagens_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContagemDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Inventário"
+        ]
+      }
+    },
+    "/api/v1/inventarios/{id}/concluir-contagem": {
+      "post": {
+        "operationId": "InventariosController_concluir_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Inventário"
+        ]
+      }
+    },
+    "/api/v1/inventarios/{id}/reabrir": {
+      "post": {
+        "operationId": "InventariosController_reabrir_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Inventário"
+        ]
+      }
+    },
+    "/api/v1/inventarios/{id}/solicitar-ajuste": {
+      "post": {
+        "operationId": "InventariosController_solicitarAjuste_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SolicitarAjusteInventarioDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Inventário"
+        ]
+      }
+    },
+    "/api/v1/inventarios/{id}/cancelar": {
+      "post": {
+        "operationId": "InventariosController_cancelar_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Inventário"
+        ]
+      }
+    },
+    "/api/v1/ajustes": {
+      "get": {
+        "operationId": "AjustesController_listar_v1",
+        "parameters": [
+          {
+            "name": "pagina",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 9007199254740991,
+              "default": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "porPagina",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 200,
+              "default": 20,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "ordenarPor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 50,
+              "type": "string"
+            }
+          },
+          {
+            "name": "ordem",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "asc",
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
+            "name": "busca",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 120,
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "PENDENTE",
+                "APROVADO",
+                "REJEITADO"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Ajustes de estoque"
+        ]
+      },
+      "post": {
+        "operationId": "AjustesController_solicitar_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AjusteDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Ajustes de estoque"
+        ]
+      }
+    },
+    "/api/v1/ajustes/{id}": {
+      "get": {
+        "operationId": "AjustesController_obter_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Ajustes de estoque"
+        ]
+      }
+    },
+    "/api/v1/ajustes/{id}/aprovar": {
+      "post": {
+        "operationId": "AjustesController_aprovar_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Ajustes de estoque"
+        ]
+      }
+    },
+    "/api/v1/ajustes/{id}/rejeitar": {
+      "post": {
+        "operationId": "AjustesController_rejeitar_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelamentoDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Ajustes de estoque"
+        ]
+      }
+    },
+    "/api/v1/integracao/crm": {
+      "get": {
+        "operationId": "IntegracaoController_painel_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Integração CRM (gestão)"
+        ]
+      },
+      "put": {
+        "operationId": "IntegracaoController_atualizar_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfiguracaoIntegracaoDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Integração CRM (gestão)"
+        ]
+      }
+    },
+    "/api/v1/integracao/crm/testar": {
+      "post": {
+        "operationId": "IntegracaoController_testar_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Integração CRM (gestão)"
+        ]
+      }
+    },
+    "/api/v1/integracao/crm/sincronizar": {
+      "post": {
+        "operationId": "IntegracaoController_sincronizar_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Integração CRM (gestão)"
+        ]
+      }
+    },
+    "/api/v1/integracao/crm/segredos/{tipo}": {
+      "post": {
+        "operationId": "IntegracaoController_gerarSegredo_v1",
+        "parameters": [
+          {
+            "name": "tipo",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Integração CRM (gestão)"
+        ]
+      }
+    },
+    "/api/v1/integracao/execucoes": {
+      "get": {
+        "operationId": "IntegracaoController_execucoes_v1",
+        "parameters": [
+          {
+            "name": "pagina",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 9007199254740991,
+              "default": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "porPagina",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 200,
+              "default": 20,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "ordenarPor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 50,
+              "type": "string"
+            }
+          },
+          {
+            "name": "ordem",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "asc",
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
+            "name": "busca",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 120,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Integração CRM (gestão)"
+        ]
+      }
+    },
+    "/api/v1/integracao/logs": {
+      "get": {
+        "operationId": "IntegracaoController_logs_v1",
+        "parameters": [
+          {
+            "name": "pagina",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 9007199254740991,
+              "default": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "porPagina",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 200,
+              "default": 20,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "ordenarPor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 50,
+              "type": "string"
+            }
+          },
+          {
+            "name": "ordem",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "asc",
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
+            "name": "busca",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 120,
+              "type": "string"
+            }
+          },
+          {
+            "name": "sucesso",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ]
+            }
+          },
+          {
+            "name": "direcao",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ENTRADA",
+                "SAIDA"
+              ]
+            }
+          },
+          {
+            "name": "dataInicio",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dataFim",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Integração CRM (gestão)"
+        ]
+      }
+    },
+    "/api/v1/integracao/eventos": {
+      "get": {
+        "operationId": "IntegracaoController_eventos_v1",
+        "parameters": [
+          {
+            "name": "pagina",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 9007199254740991,
+              "default": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "porPagina",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 200,
+              "default": 20,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "ordenarPor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 50,
+              "type": "string"
+            }
+          },
+          {
+            "name": "ordem",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "asc",
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
+            "name": "busca",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 120,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Integração CRM (gestão)"
+        ]
+      }
+    },
+    "/api/v1/integracao/eventos/{id}/reprocessar": {
+      "post": {
+        "operationId": "IntegracaoController_reprocessarEvento_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Integração CRM (gestão)"
+        ]
+      }
+    },
+    "/api/v1/integracao/tarefas": {
+      "get": {
+        "operationId": "IntegracaoController_tarefasResumo_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Integração CRM (gestão)"
+        ]
+      }
+    },
+    "/api/v1/integracao/tarefas/{id}/reprocessar": {
+      "post": {
+        "operationId": "IntegracaoController_reprocessarTarefa_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Integração CRM (gestão)"
+        ]
+      }
+    },
+    "/api/v1/integracao/clientes-api": {
+      "get": {
+        "operationId": "IntegracaoController_clientesApi_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Integração CRM (gestão)"
+        ]
+      },
+      "post": {
+        "operationId": "IntegracaoController_criarClienteApi_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClienteApiDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Integração CRM (gestão)"
+        ]
+      }
+    },
+    "/api/v1/integracao/clientes-api/{id}/revogar": {
+      "post": {
+        "operationId": "IntegracaoController_revogarClienteApi_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Integração CRM (gestão)"
+        ]
+      }
+    },
+    "/api/v1/clientes": {
+      "get": {
+        "operationId": "ClientesController_listar_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Clientes (espelho do CRM)"
+        ]
+      }
+    },
+    "/api/v1/clientes/{id}": {
+      "get": {
+        "operationId": "ClientesController_obter_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Clientes (espelho do CRM)"
+        ]
+      }
+    },
+    "/api/integracao/v1/oauth/token": {
+      "post": {
+        "operationId": "IntegracaoApiController_token",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TokenRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Obtém token de acesso (OAuth 2.0 client credentials)",
+        "tags": [
+          "Integração — API para o CRM"
+        ]
+      }
+    },
+    "/api/integracao/v1/produtos": {
+      "get": {
+        "operationId": "IntegracaoApiController_catalogo",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "integracao": [
+              "estoque:consultar"
+            ]
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Catálogo de produtos com disponibilidade",
+        "tags": [
+          "Integração — API para o CRM"
+        ]
+      }
+    },
+    "/api/integracao/v1/produtos/{sku}/saldo": {
+      "get": {
+        "operationId": "IntegracaoApiController_saldo",
+        "parameters": [
+          {
+            "name": "sku",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "integracao": [
+              "estoque:consultar"
+            ]
+          }
+        ],
+        "summary": "Saldo disponível de um produto por SKU",
+        "tags": [
+          "Integração — API para o CRM"
+        ]
+      }
+    },
+    "/api/integracao/v1/saldos/consulta": {
+      "post": {
+        "operationId": "IntegracaoApiController_saldos",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConsultaSaldosDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "integracao": [
+              "estoque:consultar"
+            ]
+          }
+        ],
+        "summary": "Consulta de saldos em lote (até 500 SKUs)",
+        "tags": [
+          "Integração — API para o CRM"
+        ]
+      }
+    },
+    "/api/integracao/v1/pedidos": {
+      "post": {
+        "description": "Se já existir pedido com o mesmo idExterno, devolve o existente (HTTP 200) sem nova reserva.",
+        "operationId": "IntegracaoApiController_criarPedido",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Obrigatório. Use um valor único por pedido.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IntegracaoPedidoDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "integracao": [
+              "pedidos:gerenciar"
+            ]
+          }
+        ],
+        "summary": "Cria pedido de venda reservando estoque",
+        "tags": [
+          "Integração — API para o CRM"
+        ]
+      }
+    },
+    "/api/integracao/v1/pedidos/{idExterno}": {
+      "get": {
+        "operationId": "IntegracaoApiController_obterPedido",
+        "parameters": [
+          {
+            "name": "idExterno",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "integracao": [
+              "pedidos:gerenciar"
+            ]
+          }
+        ],
+        "tags": [
+          "Integração — API para o CRM"
+        ]
+      }
+    },
+    "/api/integracao/v1/pedidos/{idExterno}/confirmar": {
+      "post": {
+        "operationId": "IntegracaoApiController_confirmar",
+        "parameters": [
+          {
+            "name": "idExterno",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "integracao": [
+              "pedidos:gerenciar"
+            ]
+          }
+        ],
+        "summary": "Confirma a venda e baixa o estoque (idempotente)",
+        "tags": [
+          "Integração — API para o CRM"
+        ]
+      }
+    },
+    "/api/integracao/v1/pedidos/{idExterno}/cancelar": {
+      "post": {
+        "operationId": "IntegracaoApiController_cancelar",
+        "parameters": [
+          {
+            "name": "idExterno",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IntegracaoCancelamentoDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "integracao": [
+              "pedidos:gerenciar"
+            ]
+          }
+        ],
+        "summary": "Cancela o pedido e libera a reserva (idempotente)",
+        "tags": [
+          "Integração — API para o CRM"
+        ]
+      }
+    },
+    "/api/integracao/v1/webhooks/crm": {
+      "post": {
+        "description": "Assinatura: X-Estoque-Assinatura = \"sha256=\" + HMAC_SHA256(segredo, `${X-Estoque-Timestamp}.${corpo}`). Timestamp em segundos (tolerância de 5 minutos). Eventos repetidos (mesmo id) são ignorados.",
+        "operationId": "IntegracaoApiController_webhook",
+        "parameters": [
+          {
+            "name": "x-estoque-timestamp",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-estoque-assinatura",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Estoque-Assinatura",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Estoque-Timestamp",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "tipo",
+                  "ocorridoEm",
+                  "dados"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "example": "evt_01J9..."
+                  },
+                  "tipo": {
+                    "type": "string",
+                    "enum": [
+                      "pedido.criado",
+                      "pedido.confirmado",
+                      "pedido.cancelado",
+                      "cliente.atualizado"
+                    ]
+                  },
+                  "ocorridoEm": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "dados": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": ""
+          }
+        },
+        "summary": "Recebe eventos do CRM (pedido.criado, pedido.confirmado, pedido.cancelado, cliente.atualizado)",
+        "tags": [
+          "Integração — API para o CRM"
+        ]
+      }
+    },
+    "/api/v1/notificacoes": {
+      "get": {
+        "operationId": "NotificacoesController_listar_v1",
+        "parameters": [
+          {
+            "name": "pagina",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 9007199254740991,
+              "default": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "porPagina",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 200,
+              "default": 20,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "ordenarPor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 50,
+              "type": "string"
+            }
+          },
+          {
+            "name": "ordem",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "asc",
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
+            "name": "busca",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 120,
+              "type": "string"
+            }
+          },
+          {
+            "name": "naoLidas",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ]
+            }
+          },
+          {
+            "name": "tipo",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ESTOQUE_MINIMO",
+                "ESTOQUE_ESGOTADO",
+                "REPOSICAO",
+                "MOVIMENTACAO_ATIPICA",
+                "FALHA_SINCRONIZACAO",
+                "DIVERGENCIA_INVENTARIO",
+                "AJUSTE_PENDENTE"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Notificações"
+        ]
+      }
+    },
+    "/api/v1/notificacoes/contagem": {
+      "get": {
+        "operationId": "NotificacoesController_contagem_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Notificações"
+        ]
+      }
+    },
+    "/api/v1/notificacoes/lidas": {
+      "post": {
+        "operationId": "NotificacoesController_marcarTodas_v1",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Notificações"
+        ]
+      }
+    },
+    "/api/v1/notificacoes/{id}/lida": {
+      "post": {
+        "operationId": "NotificacoesController_marcarLida_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Notificações"
+        ]
+      }
+    },
+    "/api/v1/configuracoes": {
+      "get": {
+        "operationId": "ConfiguracoesController_obter_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Configurações"
+        ]
+      },
+      "put": {
+        "operationId": "ConfiguracoesController_atualizar_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfiguracoesSistemaDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Configurações"
+        ]
+      }
+    },
+    "/api/v1/dashboard": {
+      "get": {
+        "operationId": "DashboardController_resumo_v1",
+        "parameters": [
+          {
+            "name": "dias",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Dashboard"
+        ]
+      }
+    },
+    "/api/v1/relatorios/{tipo}": {
+      "get": {
+        "operationId": "RelatoriosController_gerar_v1",
+        "parameters": [
+          {
+            "name": "tipo",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dataInicio",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dataFim",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "produtoId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "type": "string"
+            }
+          },
+          {
+            "name": "categoriaId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "type": "string"
+            }
+          },
+          {
+            "name": "fornecedorId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "type": "string"
+            }
+          },
+          {
+            "name": "localId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "type": "string"
+            }
+          },
+          {
+            "name": "tipo",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ENTRADA",
+                "SAIDA",
+                "TRANSFERENCIA",
+                "AJUSTE",
+                "ESTORNO"
+              ]
+            }
+          },
+          {
+            "name": "motivo",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "COMPRA",
+                "RECEBIMENTO",
+                "DEVOLUCAO_CLIENTE",
+                "AJUSTE_POSITIVO",
+                "VENDA",
+                "CONSUMO_INTERNO",
+                "PERDA",
+                "AVARIA",
+                "DEVOLUCAO_FORNECEDOR",
+                "AJUSTE_NEGATIVO",
+                "TRANSFERENCIA",
+                "AJUSTE_INVENTARIO",
+                "ESTORNO"
+              ]
+            }
+          },
+          {
+            "name": "dias",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 3650,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "limite",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 5000,
+              "default": 1000,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "formato",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "json",
+              "type": "string",
+              "enum": [
+                "json",
+                "pdf",
+                "xlsx"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Relatórios"
+        ]
+      }
+    },
+    "/api/v1/auditoria": {
+      "get": {
+        "operationId": "AuditoriaController_listar_v1",
+        "parameters": [
+          {
+            "name": "pagina",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 9007199254740991,
+              "default": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "porPagina",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 200,
+              "default": 20,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "ordenarPor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 50,
+              "type": "string"
+            }
+          },
+          {
+            "name": "ordem",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "asc",
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
+            "name": "busca",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 120,
+              "type": "string"
+            }
+          },
+          {
+            "name": "usuarioId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "type": "string"
+            }
+          },
+          {
+            "name": "entidade",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 60,
+              "type": "string"
+            }
+          },
+          {
+            "name": "acao",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 60,
+              "type": "string"
+            }
+          },
+          {
+            "name": "dataInicio",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dataFim",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Auditoria"
+        ]
+      }
+    },
+    "/api/v1/lgpd/titular": {
+      "get": {
+        "operationId": "LgpdController_exportar_v1",
+        "parameters": [
+          {
+            "name": "email",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "email",
+              "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$",
+              "type": "string"
+            }
+          },
+          {
+            "name": "documento",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 20,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "LGPD"
+        ]
+      }
+    },
+    "/api/v1/lgpd/usuarios/{id}/anonimizar": {
+      "post": {
+        "operationId": "LgpdController_anonimizarUsuario_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "LGPD"
+        ]
+      }
+    },
+    "/api/v1/lgpd/fornecedores/{id}/anonimizar": {
+      "post": {
+        "operationId": "LgpdController_anonimizarFornecedor_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "LGPD"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Estoque Agrogest — API",
+    "description": "API REST do sistema de gestão e controle de estoque integrado ao CRM Agrogest.\n\n* **/api/v1/** — API interna usada pelo frontend (JWT de usuário).\n* **/api/integracao/v1/** — API de integração para o CRM (OAuth 2.0 client credentials).\n\nErros seguem a RFC 7807 (`application/problem+json`). Operações de movimentação aceitam o\ncabeçalho `Idempotency-Key` para evitar processamento em duplicidade.",
+    "version": "1.0.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      },
+      "integracao": {
+        "type": "oauth2",
+        "flows": {
+          "clientCredentials": {
+            "tokenUrl": "/api/integracao/v1/oauth/token",
+            "scopes": {
+              "estoque:consultar": "Consultar catálogo e saldos",
+              "pedidos:gerenciar": "Gerenciar pedidos de venda",
+              "webhooks:enviar": "Enviar eventos por webhook"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "maxLength": 160,
+            "format": "email",
+            "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+          },
+          "senha": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "email",
+          "senha"
+        ]
+      },
+      "TrocarSenhaDto": {
+        "type": "object",
+        "properties": {
+          "senhaAtual": {
+            "type": "string",
+            "minLength": 1
+          },
+          "novaSenha": {
+            "minLength": 10,
+            "maxLength": 128,
+            "allOf": [
+              {
+                "pattern": "[a-z]"
+              },
+              {
+                "pattern": "[A-Z]"
+              },
+              {
+                "pattern": "\\d"
+              },
+              {
+                "pattern": "[^A-Za-z0-9]"
+              }
+            ]
+          },
+          "confirmacao": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "senhaAtual",
+          "novaSenha",
+          "confirmacao"
+        ]
+      },
+      "CriarUsuarioDto": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "email": {
+            "type": "string",
+            "maxLength": 160,
+            "format": "email",
+            "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+          },
+          "perfilId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "senhaInicial": {
+            "minLength": 10,
+            "maxLength": 128,
+            "allOf": [
+              {
+                "pattern": "[a-z]"
+              },
+              {
+                "pattern": "[A-Z]"
+              },
+              {
+                "pattern": "\\d"
+              },
+              {
+                "pattern": "[^A-Za-z0-9]"
+              }
+            ]
+          }
+        },
+        "required": [
+          "nome",
+          "email",
+          "perfilId",
+          "senhaInicial"
+        ]
+      },
+      "AtualizarUsuarioDto": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "perfilId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "ativo": {
+            "type": "boolean"
+          }
+        }
+      },
+      "RedefinirSenhaDto": {
+        "type": "object",
+        "properties": {
+          "novaSenha": {
+            "minLength": 10,
+            "maxLength": 128,
+            "allOf": [
+              {
+                "pattern": "[a-z]"
+              },
+              {
+                "pattern": "[A-Z]"
+              },
+              {
+                "pattern": "\\d"
+              },
+              {
+                "pattern": "[^A-Za-z0-9]"
+              }
+            ]
+          }
+        },
+        "required": [
+          "novaSenha"
+        ]
+      },
+      "PerfilDto": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 60
+          },
+          "descricao": {
+            "type": "string",
+            "maxLength": 200,
+            "nullable": true
+          },
+          "permissoes": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "dashboard:ler",
+                "produtos:ler",
+                "produtos:escrever",
+                "categorias:ler",
+                "categorias:escrever",
+                "estoque:ler",
+                "estoque:configurar",
+                "entradas:ler",
+                "entradas:registrar",
+                "saidas:ler",
+                "saidas:registrar",
+                "transferencias:registrar",
+                "movimentacoes:estornar",
+                "compras:ler",
+                "compras:escrever",
+                "pedidos:ler",
+                "pedidos:escrever",
+                "clientes:ler",
+                "inventarios:ler",
+                "inventarios:escrever",
+                "ajustes:solicitar",
+                "ajustes:aprovar",
+                "fornecedores:ler",
+                "fornecedores:escrever",
+                "relatorios:ler",
+                "relatorios:exportar",
+                "integracao:ler",
+                "integracao:gerenciar",
+                "notificacoes:ler",
+                "usuarios:ler",
+                "usuarios:gerenciar",
+                "perfis:gerenciar",
+                "configuracoes:gerenciar",
+                "auditoria:ler",
+                "lgpd:gerenciar"
+              ]
+            }
+          }
+        },
+        "required": [
+          "nome",
+          "permissoes"
+        ]
+      },
+      "CategoriaDto": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "descricao": {
+            "type": "string",
+            "maxLength": 200,
+            "nullable": true
+          },
+          "paiId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              {
+                "type": "string",
+                "enum": [
+                  ""
+                ]
+              }
+            ],
+            "nullable": true
+          },
+          "ativo": {
+            "default": true,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "nome"
+        ]
+      },
+      "UnidadeMedidaDto": {
+        "type": "object",
+        "properties": {
+          "sigla": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 10,
+            "pattern": "^[A-Za-z0-9²³/]+$"
+          },
+          "nome": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 60
+          },
+          "casasDecimais": {
+            "default": 0,
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 4
+          },
+          "ativo": {
+            "default": true,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "sigla",
+          "nome"
+        ]
+      },
+      "LocalDto": {
+        "type": "object",
+        "properties": {
+          "codigo": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 30,
+            "pattern": "^[A-Za-z0-9._-]+$"
+          },
+          "nome": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "descricao": {
+            "type": "string",
+            "maxLength": 200,
+            "nullable": true
+          },
+          "tipo": {
+            "type": "string",
+            "enum": [
+              "DEPOSITO",
+              "AREA",
+              "POSICAO"
+            ]
+          },
+          "paiId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              {
+                "type": "string",
+                "enum": [
+                  ""
+                ]
+              }
+            ],
+            "nullable": true
+          },
+          "ativo": {
+            "default": true,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "codigo",
+          "nome",
+          "tipo"
+        ]
+      },
+      "ProdutoDto": {
+        "type": "object",
+        "properties": {
+          "codigoInterno": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 30,
+            "pattern": "^[A-Za-z0-9._-]+$"
+          },
+          "sku": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50,
+            "pattern": "^[A-Za-z0-9._-]+$"
+          },
+          "codigoBarras": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[0-9A-Za-z-]{4,50}$"
+              },
+              {
+                "type": "string",
+                "enum": [
+                  ""
+                ]
+              }
+            ],
+            "nullable": true
+          },
+          "nome": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 150
+          },
+          "descricao": {
+            "type": "string",
+            "maxLength": 2000,
+            "nullable": true
+          },
+          "categoriaId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              {
+                "type": "string",
+                "enum": [
+                  ""
+                ]
+              }
+            ],
+            "nullable": true
+          },
+          "unidadeMedidaId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "precoCusto": {
+            "default": 0,
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000000000
+          },
+          "precoVenda": {
+            "default": 0,
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000000000
+          },
+          "estoqueMinimo": {
+            "default": 0,
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000000000
+          },
+          "estoqueMaximo": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000000000,
+            "nullable": true
+          },
+          "localPadraoId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              {
+                "type": "string",
+                "enum": [
+                  ""
+                ]
+              }
+            ],
+            "nullable": true
+          },
+          "status": {
+            "default": "ATIVO",
+            "type": "string",
+            "enum": [
+              "ATIVO",
+              "INATIVO"
+            ]
+          },
+          "fornecedores": {
+            "maxItems": 20,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "fornecedorId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                "codigoNoFornecedor": {
+                  "type": "string",
+                  "maxLength": 50,
+                  "nullable": true
+                },
+                "prazoEntregaDias": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 365,
+                  "nullable": true
+                },
+                "principal": {
+                  "default": false,
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "fornecedorId"
+              ]
+            }
+          }
+        },
+        "required": [
+          "codigoInterno",
+          "sku",
+          "nome",
+          "unidadeMedidaId"
+        ]
+      },
+      "FornecedorDto": {
+        "type": "object",
+        "properties": {
+          "tipoPessoa": {
+            "type": "string",
+            "enum": [
+              "PF",
+              "PJ"
+            ]
+          },
+          "documento": {
+            "type": "string"
+          },
+          "razaoSocial": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "nomeFantasia": {
+            "type": "string",
+            "maxLength": 200,
+            "nullable": true
+          },
+          "inscricaoEstadual": {
+            "type": "string",
+            "maxLength": 30,
+            "nullable": true
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 160,
+                "format": "email",
+                "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+              },
+              {
+                "type": "string",
+                "enum": [
+                  ""
+                ]
+              }
+            ],
+            "nullable": true
+          },
+          "telefone": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[\\d\\s()+-]{8,20}$"
+              },
+              {
+                "type": "string",
+                "enum": [
+                  ""
+                ]
+              }
+            ],
+            "nullable": true
+          },
+          "cep": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "logradouro": {
+            "type": "string",
+            "maxLength": 200,
+            "nullable": true
+          },
+          "numero": {
+            "type": "string",
+            "maxLength": 20,
+            "nullable": true
+          },
+          "complemento": {
+            "type": "string",
+            "maxLength": 100,
+            "nullable": true
+          },
+          "bairro": {
+            "type": "string",
+            "maxLength": 100,
+            "nullable": true
+          },
+          "cidade": {
+            "type": "string",
+            "maxLength": 100,
+            "nullable": true
+          },
+          "uf": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "AC",
+                  "AL",
+                  "AP",
+                  "AM",
+                  "BA",
+                  "CE",
+                  "DF",
+                  "ES",
+                  "GO",
+                  "MA",
+                  "MT",
+                  "MS",
+                  "MG",
+                  "PA",
+                  "PB",
+                  "PR",
+                  "PE",
+                  "PI",
+                  "RJ",
+                  "RN",
+                  "RS",
+                  "RO",
+                  "RR",
+                  "SC",
+                  "SP",
+                  "SE",
+                  "TO"
+                ]
+              },
+              {
+                "type": "string",
+                "enum": [
+                  ""
+                ]
+              }
+            ],
+            "nullable": true
+          },
+          "situacao": {
+            "default": "ATIVO",
+            "type": "string",
+            "enum": [
+              "ATIVO",
+              "INATIVO",
+              "BLOQUEADO"
+            ]
+          },
+          "observacoes": {
+            "type": "string",
+            "maxLength": 2000,
+            "nullable": true
+          },
+          "contatos": {
+            "maxItems": 20,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "nome": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                },
+                "cargo": {
+                  "type": "string",
+                  "maxLength": 80,
+                  "nullable": true
+                },
+                "email": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 160,
+                      "format": "email",
+                      "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                    },
+                    {
+                      "type": "string",
+                      "enum": [
+                        ""
+                      ]
+                    }
+                  ],
+                  "nullable": true
+                },
+                "telefone": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "pattern": "^[\\d\\s()+-]{8,20}$"
+                    },
+                    {
+                      "type": "string",
+                      "enum": [
+                        ""
+                      ]
+                    }
+                  ],
+                  "nullable": true
+                }
+              },
+              "required": [
+                "nome"
+              ]
+            }
+          }
+        },
+        "required": [
+          "tipoPessoa",
+          "documento",
+          "razaoSocial"
+        ]
+      },
+      "EntradaDto": {
+        "type": "object",
+        "properties": {
+          "motivo": {
+            "type": "string",
+            "enum": [
+              "COMPRA",
+              "RECEBIMENTO",
+              "DEVOLUCAO_CLIENTE",
+              "AJUSTE_POSITIVO"
+            ]
+          },
+          "dataMovimentacao": {
+            "type": "string"
+          },
+          "fornecedorId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              {
+                "type": "string",
+                "enum": [
+                  ""
+                ]
+              }
+            ],
+            "nullable": true
+          },
+          "clienteCrmId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              {
+                "type": "string",
+                "enum": [
+                  ""
+                ]
+              }
+            ],
+            "nullable": true
+          },
+          "numeroDocumento": {
+            "type": "string",
+            "maxLength": 60,
+            "nullable": true
+          },
+          "serieDocumento": {
+            "type": "string",
+            "maxLength": 10,
+            "nullable": true
+          },
+          "dataDocumento": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "observacao": {
+            "type": "string",
+            "maxLength": 1000,
+            "nullable": true
+          },
+          "itens": {
+            "minItems": 1,
+            "maxItems": 200,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "produtoId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                "localId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                "quantidade": {
+                  "type": "number",
+                  "exclusiveMinimum": true,
+                  "maximum": 1000000000,
+                  "minimum": 0
+                },
+                "custoUnitario": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1000000000,
+                  "nullable": true
+                }
+              },
+              "required": [
+                "produtoId",
+                "localId",
+                "quantidade"
+              ]
+            }
+          }
+        },
+        "required": [
+          "motivo",
+          "itens"
+        ]
+      },
+      "SaidaDto": {
+        "type": "object",
+        "properties": {
+          "motivo": {
+            "type": "string",
+            "enum": [
+              "VENDA",
+              "CONSUMO_INTERNO",
+              "PERDA",
+              "AVARIA",
+              "DEVOLUCAO_FORNECEDOR"
+            ]
+          },
+          "dataMovimentacao": {
+            "type": "string"
+          },
+          "clienteCrmId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              {
+                "type": "string",
+                "enum": [
+                  ""
+                ]
+              }
+            ],
+            "nullable": true
+          },
+          "fornecedorId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              {
+                "type": "string",
+                "enum": [
+                  ""
+                ]
+              }
+            ],
+            "nullable": true
+          },
+          "destino": {
+            "type": "string",
+            "maxLength": 120,
+            "nullable": true
+          },
+          "numeroDocumento": {
+            "type": "string",
+            "maxLength": 60,
+            "nullable": true
+          },
+          "observacao": {
+            "type": "string",
+            "maxLength": 1000,
+            "nullable": true
+          },
+          "itens": {
+            "minItems": 1,
+            "maxItems": 200,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "produtoId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                "localId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                "quantidade": {
+                  "type": "number",
+                  "exclusiveMinimum": true,
+                  "maximum": 1000000000,
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "produtoId",
+                "localId",
+                "quantidade"
+              ]
+            }
+          }
+        },
+        "required": [
+          "motivo",
+          "itens"
+        ]
+      },
+      "TransferenciaDto": {
+        "type": "object",
+        "properties": {
+          "localOrigemId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "localDestinoId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "dataMovimentacao": {
+            "type": "string"
+          },
+          "observacao": {
+            "type": "string",
+            "maxLength": 1000,
+            "nullable": true
+          },
+          "itens": {
+            "minItems": 1,
+            "maxItems": 200,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "produtoId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                "quantidade": {
+                  "type": "number",
+                  "exclusiveMinimum": true,
+                  "maximum": 1000000000,
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "produtoId",
+                "quantidade"
+              ]
+            }
+          }
+        },
+        "required": [
+          "localOrigemId",
+          "localDestinoId",
+          "itens"
+        ]
+      },
+      "EstornoDto": {
+        "type": "object",
+        "properties": {
+          "justificativa": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "justificativa"
+        ]
+      },
+      "PedidoCompraDto": {
+        "type": "object",
+        "properties": {
+          "fornecedorId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "previsaoEntrega": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "observacao": {
+            "type": "string",
+            "maxLength": 1000,
+            "nullable": true
+          },
+          "itens": {
+            "minItems": 1,
+            "maxItems": 200,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "produtoId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                "quantidade": {
+                  "type": "number",
+                  "exclusiveMinimum": true,
+                  "maximum": 1000000000,
+                  "minimum": 0
+                },
+                "precoUnitario": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1000000000
+                }
+              },
+              "required": [
+                "produtoId",
+                "quantidade",
+                "precoUnitario"
+              ]
+            }
+          }
+        },
+        "required": [
+          "fornecedorId",
+          "itens"
+        ]
+      },
+      "CancelamentoDto": {
+        "type": "object",
+        "properties": {
+          "motivo": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "motivo"
+        ]
+      },
+      "RecebimentoDto": {
+        "type": "object",
+        "properties": {
+          "dataMovimentacao": {
+            "type": "string"
+          },
+          "numeroDocumento": {
+            "type": "string",
+            "maxLength": 60,
+            "nullable": true
+          },
+          "serieDocumento": {
+            "type": "string",
+            "maxLength": 10,
+            "nullable": true
+          },
+          "dataDocumento": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "observacao": {
+            "type": "string",
+            "maxLength": 1000,
+            "nullable": true
+          },
+          "itens": {
+            "minItems": 1,
+            "maxItems": 200,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "itemId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                "localId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                "quantidade": {
+                  "type": "number",
+                  "exclusiveMinimum": true,
+                  "maximum": 1000000000,
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "itemId",
+                "localId",
+                "quantidade"
+              ]
+            }
+          }
+        },
+        "required": [
+          "itens"
+        ]
+      },
+      "PedidoVendaDto": {
+        "type": "object",
+        "properties": {
+          "clienteCrmId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              {
+                "type": "string",
+                "enum": [
+                  ""
+                ]
+              }
+            ],
+            "nullable": true
+          },
+          "observacao": {
+            "type": "string",
+            "maxLength": 1000,
+            "nullable": true
+          },
+          "itens": {
+            "minItems": 1,
+            "maxItems": 200,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "produtoId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                "localId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                "quantidade": {
+                  "type": "number",
+                  "exclusiveMinimum": true,
+                  "maximum": 1000000000,
+                  "minimum": 0
+                },
+                "precoUnitario": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1000000000,
+                  "nullable": true
+                }
+              },
+              "required": [
+                "produtoId",
+                "localId",
+                "quantidade"
+              ]
+            }
+          }
+        },
+        "required": [
+          "itens"
+        ]
+      },
+      "InventarioDto": {
+        "type": "object",
+        "properties": {
+          "descricao": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 150
+          },
+          "localId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              {
+                "type": "string",
+                "enum": [
+                  ""
+                ]
+              }
+            ],
+            "nullable": true
+          },
+          "categoriaId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              {
+                "type": "string",
+                "enum": [
+                  ""
+                ]
+              }
+            ],
+            "nullable": true
+          },
+          "incluirSemSaldo": {
+            "default": false,
+            "type": "boolean"
+          },
+          "observacao": {
+            "type": "string",
+            "maxLength": 1000,
+            "nullable": true
+          }
+        },
+        "required": [
+          "descricao"
+        ]
+      },
+      "ContagemDto": {
+        "type": "object",
+        "properties": {
+          "itens": {
+            "minItems": 1,
+            "maxItems": 1000,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "itemId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                "quantidadeContada": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1000000000
+                }
+              },
+              "required": [
+                "itemId",
+                "quantidadeContada"
+              ]
+            }
+          }
+        },
+        "required": [
+          "itens"
+        ]
+      },
+      "SolicitarAjusteInventarioDto": {
+        "type": "object",
+        "properties": {
+          "justificativa": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        },
+        "required": [
+          "justificativa"
+        ]
+      },
+      "AjusteDto": {
+        "type": "object",
+        "properties": {
+          "justificativa": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "itens": {
+            "minItems": 1,
+            "maxItems": 200,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "produtoId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                "localId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                "quantidadeDelta": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "produtoId",
+                "localId",
+                "quantidadeDelta"
+              ]
+            }
+          }
+        },
+        "required": [
+          "justificativa",
+          "itens"
+        ]
+      },
+      "ConfiguracaoIntegracaoDto": {
+        "type": "object",
+        "properties": {
+          "ativo": {
+            "type": "boolean"
+          },
+          "baseUrl": {
+            "type": "string",
+            "maxLength": 300,
+            "format": "uri"
+          },
+          "authHeaderNome": {
+            "type": "string",
+            "maxLength": 60,
+            "pattern": "^[A-Za-z0-9-]*$",
+            "nullable": true
+          },
+          "authHeaderValor": {
+            "type": "string",
+            "maxLength": 2000,
+            "nullable": true
+          },
+          "timeoutMs": {
+            "type": "integer",
+            "minimum": 1000,
+            "maximum": 60000
+          },
+          "intervaloSyncMinutos": {
+            "type": "integer",
+            "minimum": 5,
+            "maximum": 1440
+          },
+          "webhookSaidaAtivo": {
+            "type": "boolean"
+          },
+          "webhookSaidaUrl": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 300,
+                "format": "uri"
+              },
+              {
+                "type": "string",
+                "enum": [
+                  ""
+                ]
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "required": [
+          "ativo",
+          "baseUrl",
+          "timeoutMs",
+          "intervaloSyncMinutos",
+          "webhookSaidaAtivo"
+        ]
+      },
+      "ClienteApiDto": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "escopos": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "estoque:consultar",
+                "pedidos:gerenciar",
+                "webhooks:enviar"
+              ]
+            }
+          }
+        },
+        "required": [
+          "nome",
+          "escopos"
+        ]
+      },
+      "TokenRequestDto": {
+        "type": "object",
+        "properties": {
+          "grant_type": {
+            "type": "string",
+            "enum": [
+              "client_credentials"
+            ]
+          },
+          "client_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "client_secret": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "scope": {
+            "type": "string",
+            "maxLength": 300
+          }
+        },
+        "required": [
+          "grant_type",
+          "client_id",
+          "client_secret"
+        ]
+      },
+      "ConsultaSaldosDto": {
+        "type": "object",
+        "properties": {
+          "skus": {
+            "minItems": 1,
+            "maxItems": 500,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 50
+            }
+          }
+        },
+        "required": [
+          "skus"
+        ]
+      },
+      "IntegracaoPedidoDto": {
+        "type": "object",
+        "properties": {
+          "idExterno": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "pattern": "^[A-Za-z0-9._:-]+$"
+          },
+          "clienteCrmId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "nullable": true
+          },
+          "observacao": {
+            "type": "string",
+            "maxLength": 1000,
+            "nullable": true
+          },
+          "itens": {
+            "minItems": 1,
+            "maxItems": 200,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "sku": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 50
+                },
+                "quantidade": {
+                  "type": "number",
+                  "exclusiveMinimum": true,
+                  "maximum": 1000000000,
+                  "minimum": 0
+                },
+                "precoUnitario": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1000000000,
+                  "nullable": true
+                },
+                "localCodigo": {
+                  "type": "string",
+                  "maxLength": 30,
+                  "nullable": true
+                }
+              },
+              "required": [
+                "sku",
+                "quantidade"
+              ]
+            }
+          }
+        },
+        "required": [
+          "idExterno",
+          "itens"
+        ]
+      },
+      "IntegracaoCancelamentoDto": {
+        "type": "object",
+        "properties": {
+          "motivo": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "motivo"
+        ]
+      },
+      "ConfiguracoesSistemaDto": {
+        "type": "object",
+        "properties": {
+          "alertas": {
+            "type": "object",
+            "properties": {
+              "multiplicadorDesvio": {
+                "default": 3,
+                "type": "number",
+                "minimum": 1,
+                "maximum": 10
+              },
+              "janelaDias": {
+                "default": 90,
+                "type": "integer",
+                "minimum": 7,
+                "maximum": 365
+              },
+              "minimoAmostras": {
+                "default": 5,
+                "type": "integer",
+                "minimum": 3,
+                "maximum": 100
+              },
+              "percentualSaldoAtipico": {
+                "default": 80,
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "horarioInicio": {
+                "default": "06:00",
+                "type": "string",
+                "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+              },
+              "horarioFim": {
+                "default": "20:00",
+                "type": "string",
+                "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+              },
+              "fusoHorario": {
+                "default": "America/Sao_Paulo",
+                "type": "string"
+              }
+            }
+          },
+          "notificacoes": {
+            "type": "object",
+            "properties": {
+              "emailHabilitado": {
+                "default": false,
+                "type": "boolean"
+              },
+              "emailsDestino": {
+                "default": [],
+                "maxItems": 20,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "email",
+                  "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                }
+              },
+              "tiposPorEmail": {
+                "default": [],
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "ESTOQUE_MINIMO",
+                    "ESTOQUE_ESGOTADO",
+                    "REPOSICAO",
+                    "MOVIMENTACAO_ATIPICA",
+                    "FALHA_SINCRONIZACAO",
+                    "DIVERGENCIA_INVENTARIO",
+                    "AJUSTE_PENDENTE"
+                  ]
+                }
+              }
+            }
+          },
+          "integracao": {
+            "type": "object",
+            "properties": {
+              "falhasParaAlerta": {
+                "default": 3,
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 20
+              }
+            }
+          },
+          "retencao": {
+            "type": "object",
+            "properties": {
+              "logsIntegracaoDias": {
+                "default": 180,
+                "type": "integer",
+                "minimum": 30,
+                "maximum": 3650
+              },
+              "logsAuditoriaDias": {
+                "default": 1825,
+                "type": "integer",
+                "minimum": 180,
+                "maximum": 3650
+              }
+            }
+          }
+        },
+        "required": [
+          "alertas",
+          "notificacoes",
+          "integracao",
+          "retencao"
+        ]
+      }
+    }
+  }
+}

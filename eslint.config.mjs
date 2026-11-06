@@ -50,6 +50,11 @@ export default tseslint.config(
     rules: { 'no-console': 'off' },
   },
   {
+    // Globais do runtime do k6
+    files: ['tests/perf/**/*.js'],
+    languageOptions: { globals: { __ENV: 'readonly', __VU: 'readonly', __ITER: 'readonly' } },
+  },
+  {
     files: ['**/*.spec.ts', '**/*.test.ts', '**/test/**'],
     rules: { '@typescript-eslint/no-explicit-any': 'off' },
   },
