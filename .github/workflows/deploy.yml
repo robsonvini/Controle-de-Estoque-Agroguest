@@ -33,6 +33,8 @@ jobs:
       - id: ecr
         uses: aws-actions/amazon-ecr-login@v2
 
+      # Tarefas ECS em Graviton (ARM64)
+      - uses: docker/setup-qemu-action@v3
       - uses: docker/setup-buildx-action@v3
 
       - name: Build e push das imagens
@@ -42,10 +44,10 @@ jobs:
         run: |
           set -euo pipefail
           for alvo in api migracao; do
-            docker buildx build --push -f apps/api/Dockerfile --target "$alvo" \
+            docker buildx build --push --platform linux/arm64 -f apps/api/Dockerfile --target "$alvo" \
               -t "$REGISTRO/estoque-$AMBIENTE-$alvo:$TAG" .
           done
-          docker buildx build --push -f apps/web/Dockerfile -t "$REGISTRO/estoque-$AMBIENTE-web:$TAG" .
+          docker buildx build --push --platform linux/arm64 -f apps/web/Dockerfile -t "$REGISTRO/estoque-$AMBIENTE-web:$TAG" .
 
       - name: Migrações do banco (tarefa ECS avulsa)
         env:
