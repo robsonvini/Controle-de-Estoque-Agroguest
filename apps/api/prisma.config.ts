@@ -5,7 +5,7 @@ export default defineConfig({
   schema: 'prisma/schema.prisma',
   migrations: {
     path: 'prisma/migrations',
-    seed: 'tsx prisma/seed.ts',
+    seed: '/app/node_modules/.bin/tsx prisma/seed.ts',
   },
   datasource: {
     // `prisma generate` (build de imagem) não acessa o banco; migrate/seed exigem DATABASE_URL real
