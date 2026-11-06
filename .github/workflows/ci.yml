@@ -1,0 +1,90 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [develop, homolog, main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: '24'
+  DATABASE_URL: postgresql://estoque:estoque_dev@localhost:5432/estoque?schema=public
+  DATABASE_URL_TEST: postgresql://estoque:estoque_dev@localhost:5432/estoque_test?schema=public
+  JWT_ACCESS_SECRET: ci-segredo-de-acesso-com-mais-de-32-caracteres
+  JWT_INTEGRACAO_SECRET: ci-segredo-de-integracao-com-mais-de-32-caracteres
+  CRYPTO_KEY: Y2ktY2hhdmUtZGUtMzItYnl0ZXMtcGFyYS10ZXN0ZXM=
+  S3_ENDPOINT: http://localhost:9090
+  S3_FORCE_PATH_STYLE: 'true'
+  S3_ACCESS_KEY_ID: dev
+  S3_SECRET_ACCESS_KEY: dev
+
+jobs:
+  qualidade:
+    name: Lint, tipos e testes
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: estoque
+          POSTGRES_PASSWORD: estoque_dev
+          POSTGRES_DB: estoque
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U estoque" --health-interval 5s --health-timeout 3s --health-retries 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with: { node-version: '${{ env.NODE_VERSION }}', cache: npm }
+      - run: npm ci
+      - name: Banco de testes
+        run: PGPASSWORD=estoque_dev psql -h localhost -U estoque -d estoque -c "CREATE DATABASE estoque_test"
+      - run: npm run build:shared
+      - run: npm run db:generate -w @estoque/api
+      - run: npm run lint
+      - run: npm run format:check
+      - run: npm run typecheck
+      - name: Testes do pacote compartilhado
+        run: npm test -w @estoque/shared
+      - name: Testes unitários e de integração da API (PostgreSQL real)
+        run: npm test -w @estoque/api
+      - name: Build
+        run: npm run build -w @estoque/api && npm run build -w @estoque/web
+      - name: Testes de interface e acessibilidade (Playwright + axe)
+        run: |
+          npx playwright install --with-deps chromium
+          npm run test:e2e
+        working-directory: apps/web
+        env: { CI: 'true' }
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with: { name: relatorio-playwright, path: apps/web/playwright-report, retention-days: 7 }
+
+  seguranca:
+    name: Segurança de dependências
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with: { node-version: '${{ env.NODE_VERSION }}', cache: npm }
+      - run: npm ci
+      - name: npm audit (falha em vulnerabilidades altas ou críticas de produção)
+        run: npm audit --omit=dev --audit-level=high
+
+  imagens:
+    name: Build das imagens Docker
+    runs-on: ubuntu-latest
+    needs: qualidade
+    steps:
+      - uses: actions/checkout@v5
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with: { context: ., file: apps/api/Dockerfile, target: api, push: false, cache-from: type=gha, cache-to: 'type=gha,mode=max' }
+      - uses: docker/build-push-action@v6
+        with: { context: ., file: apps/web/Dockerfile, push: false, cache-from: type=gha, cache-to: 'type=gha,mode=max' }

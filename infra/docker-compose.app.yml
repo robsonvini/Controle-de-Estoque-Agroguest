@@ -1,0 +1,60 @@
+# Executa a aplicação completa em contêineres (imagens de produção), usando os
+# serviços de apoio de infra/docker-compose.yml.
+#
+#   docker compose -f infra/docker-compose.yml -f infra/docker-compose.app.yml up -d --build
+#
+# Acesse http://localhost:8080 (frontend) — a API fica em http://localhost:8080/api.
+name: estoque-agrogest
+
+x-ambiente-api: &ambiente-api
+  NODE_ENV: production
+  DATABASE_URL: postgresql://estoque:estoque_dev@postgres:5432/estoque?schema=public
+  WEB_ORIGIN: http://localhost:8080
+  # Apenas para execução local; em produção os segredos vêm do AWS Secrets Manager
+  JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:?defina JWT_ACCESS_SECRET}
+  JWT_INTEGRACAO_SECRET: ${JWT_INTEGRACAO_SECRET:?defina JWT_INTEGRACAO_SECRET}
+  CRYPTO_KEY: ${CRYPTO_KEY:?defina CRYPTO_KEY}
+  # HTTP local sem TLS: cookies sem a flag Secure (NUNCA em produção)
+  COOKIE_SECURE: 'false'
+  PERMITIR_HTTP_INSEGURO: 'true'
+  S3_BUCKET: estoque-arquivos
+  S3_ENDPOINT: http://s3:9090
+  S3_FORCE_PATH_STYLE: 'true'
+  S3_ACCESS_KEY_ID: dev
+  S3_SECRET_ACCESS_KEY: dev
+  SMTP_HOST: mailpit
+  SMTP_PORT: '1025'
+  CRM_BASE_URL: ${CRM_BASE_URL:-http://host.docker.internal:8000}
+
+services:
+  migracao:
+    build: { context: .., dockerfile: apps/api/Dockerfile, target: migracao }
+    environment:
+      <<: *ambiente-api
+      SEED_ADMIN_EMAIL: ${SEED_ADMIN_EMAIL:-admin@agrogest.local}
+      SEED_ADMIN_SENHA: ${SEED_ADMIN_SENHA:?defina SEED_ADMIN_SENHA}
+    depends_on:
+      postgres: { condition: service_healthy }
+
+  api:
+    build: { context: .., dockerfile: apps/api/Dockerfile, target: api }
+    environment: *ambiente-api
+    depends_on:
+      migracao: { condition: service_completed_successfully }
+
+  worker:
+    build: { context: .., dockerfile: apps/api/Dockerfile, target: api }
+    command: ['node', 'dist/main-worker.js']
+    environment: *ambiente-api
+    healthcheck: { disable: true }
+    depends_on:
+      migracao: { condition: service_completed_successfully }
+
+  web:
+    build:
+      context: ..
+      dockerfile: apps/web/Dockerfile
+      args: { API_INTERNAL_URL: 'http://api:3333' }
+    ports:
+      - '8080:3000'
+    depends_on: [api]

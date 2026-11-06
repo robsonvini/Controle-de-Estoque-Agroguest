@@ -1,3 +1,4 @@
+import path from 'node:path';
 import type { NextConfig } from 'next';
 
 const API_URL = process.env.API_INTERNAL_URL ?? 'http://localhost:3333';
@@ -19,6 +20,8 @@ const csp = [
 
 const config: NextConfig = {
   output: 'standalone',
+  // Monorepo: o rastreamento de arquivos do build standalone parte da raiz do repositório
+  outputFileTracingRoot: path.join(__dirname, '../../'),
   // Diretório de build separado permite rodar os testes E2E com o servidor de desenvolvimento aberto
   distDir: process.env.NEXT_DIST_DIR ?? '.next',
   poweredByHeader: false,

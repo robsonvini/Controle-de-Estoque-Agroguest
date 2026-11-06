@@ -198,7 +198,7 @@ export class RelatoriosService {
         { chave: 'valor', titulo: 'Valor', tipo: 'moeda', largura: 0.9 },
         { chave: 'responsavel', titulo: 'Responsável', tipo: 'texto', largura: 1.2 },
         { chave: 'documento', titulo: 'Documento', tipo: 'texto', largura: 0.9 },
-        { chave: 'parceiro', titulo: 'Fornecedor/cliente/destino', tipo: 'texto', largura: 1.5 },
+        { chave: 'parceiro', titulo: 'Parceiro / destino', tipo: 'texto', largura: 1.5 },
       ] satisfies Coluna[],
       linhas: dados,
       totais: { registros: dados.length },

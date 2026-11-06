@@ -141,6 +141,7 @@ export function gerarPdf(r: Relatorio): Promise<Buffer> {
       r.colunas.forEach((c, i) => {
         doc.text(c.titulo, x + 2, y + 1, {
           width: larguras[i]! - 4,
+          height: fonte + 2,
           align: alinhamentoDireita(c) ? 'right' : 'left',
           lineBreak: false,
           ellipsis: true,
@@ -207,12 +208,16 @@ export function gerarPdf(r: Relatorio): Promise<Buffer> {
     const paginas = doc.bufferedPageRange();
     for (let i = 0; i < paginas.count; i++) {
       doc.switchToPage(i);
+      // Sem margem inferior temporariamente: escrever no rodapé não deve criar nova página
+      const margemInferior = doc.page.margins.bottom;
+      doc.page.margins.bottom = 0;
       doc.font('Helvetica').fontSize(7).fillColor('#777777');
       doc.text(`Página ${i + 1} de ${paginas.count}`, doc.page.margins.left, doc.page.height - 28, {
         width: larguraUtil,
         align: 'right',
         lineBreak: false,
       });
+      doc.page.margins.bottom = margemInferior;
     }
     doc.end();
   });

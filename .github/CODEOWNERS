@@ -1,0 +1,7 @@
+# Revisão obrigatória por responsáveis de cada área (ajuste os times da organização)
+*                                   @agrogest/estoque-mantenedores
+/apps/api/prisma/                   @agrogest/estoque-mantenedores @agrogest/dba
+/apps/api/src/modules/estoque/      @agrogest/estoque-mantenedores
+/apps/api/src/modules/integracao/   @agrogest/estoque-mantenedores @agrogest/crm
+/infra/                             @agrogest/infraestrutura
+/.github/workflows/                 @agrogest/infraestrutura
