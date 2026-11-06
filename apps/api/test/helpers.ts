@@ -18,7 +18,7 @@ export interface Contexto {
 
 export async function criarApp(): Promise<Contexto> {
   const modulo = await Test.createTestingModule({ imports: [AppModule] }).compile();
-  const app = modulo.createNestApplication({ logger: false });
+  const app = modulo.createNestApplication({ logger: false, rawBody: true });
   configurarApp(app);
   await app.listen(0, '127.0.0.1');
   const url = await app.getUrl();
