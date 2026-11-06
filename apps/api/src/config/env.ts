@@ -23,6 +23,8 @@ const schema = z.object({
   REFRESH_TOKEN_TTL_DIAS: z.coerce.number().int().min(1).max(30).default(7),
   COOKIE_SECURE: booleano,
   LOGIN_MAX_TENTATIVAS: z.coerce.number().int().min(3).max(20).default(5),
+  /** Tentativas de login por minuto por IP (rate limit). */
+  LOGIN_LIMITE_POR_MINUTO: z.coerce.number().int().min(1).max(10000).default(10),
   LOGIN_BLOQUEIO_MINUTOS: z.coerce.number().int().min(1).max(1440).default(15),
   CRYPTO_KEY: z
     .string()

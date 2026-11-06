@@ -36,7 +36,7 @@ export class AuthController {
   constructor(private readonly auth: AuthService) {}
 
   @Publico()
-  @Throttle({ default: { limit: 10, ttl: 60_000 } })
+  @Throttle({ default: { limit: env.LOGIN_LIMITE_POR_MINUTO, ttl: 60_000 } })
   @Post('login')
   @HttpCode(200)
   async login(

@@ -10,6 +10,7 @@ import {
   TIPOS_MOVIMENTACAO,
 } from '../enums';
 import {
+  dataTexto,
   dataHoraNaoFutura,
   idOpcional,
   idSchema,
@@ -29,7 +30,7 @@ const semItensDuplicados = <T extends { produtoId: string; localId?: string }>(i
 const documento = {
   numeroDocumento: textoOpcional(60),
   serieDocumento: textoOpcional(10),
-  dataDocumento: z.coerce.date().nullish(),
+  dataDocumento: dataTexto.nullish(),
 };
 
 // ---------------- Entradas ----------------
@@ -150,8 +151,8 @@ export const listarMovimentacoesSchema = paginacaoSchema.extend({
   fornecedorId: idSchema.optional(),
   clienteCrmId: idSchema.optional(),
   usuarioId: idSchema.optional(),
-  dataInicio: z.coerce.date().optional(),
-  dataFim: z.coerce.date().optional(),
+  dataInicio: dataTexto.optional(),
+  dataFim: dataTexto.optional(),
 });
 export type ListarMovimentacoesQuery = z.infer<typeof listarMovimentacoesSchema>;
 
@@ -168,7 +169,7 @@ export const listarSaldosSchema = paginacaoSchema.extend({
 // ---------------- Compras ----------------
 export const pedidoCompraSchema = z.object({
   fornecedorId: idSchema,
-  previsaoEntrega: z.coerce.date().nullish(),
+  previsaoEntrega: dataTexto.nullish(),
   observacao: textoOpcional(1000),
   itens: z
     .array(
@@ -198,8 +199,8 @@ export type RecebimentoInput = z.infer<typeof recebimentoSchema>;
 export const listarComprasSchema = paginacaoSchema.extend({
   fornecedorId: idSchema.optional(),
   status: z.enum(STATUS_PEDIDO_COMPRA).optional(),
-  dataInicio: z.coerce.date().optional(),
-  dataFim: z.coerce.date().optional(),
+  dataInicio: dataTexto.optional(),
+  dataFim: dataTexto.optional(),
 });
 
 export const cancelamentoSchema = z.object({ motivo: textoObrigatorio(500) });
@@ -228,8 +229,8 @@ export const listarPedidosSchema = paginacaoSchema.extend({
   status: z.enum(STATUS_PEDIDO).optional(),
   origem: z.enum(['MANUAL', 'CRM_API']).optional(),
   clienteCrmId: idSchema.optional(),
-  dataInicio: z.coerce.date().optional(),
-  dataFim: z.coerce.date().optional(),
+  dataInicio: dataTexto.optional(),
+  dataFim: dataTexto.optional(),
 });
 
 // ---------------- Inventário ----------------
