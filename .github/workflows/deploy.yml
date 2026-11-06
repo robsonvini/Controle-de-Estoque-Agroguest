@@ -1,0 +1,97 @@
+name: Deploy AWS
+
+# develop → desenvolvimento · homolog → homologação · main → produção
+on:
+  push:
+    branches: [develop, homolog, main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  id-token: write # OIDC: sem chaves de acesso AWS armazenadas no GitHub
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    # Ambientes do GitHub com aprovação obrigatória para produção (configurar em Settings → Environments)
+    environment: ${{ github.ref_name == 'main' && 'producao' || github.ref_name == 'homolog' && 'homologacao' || 'desenvolvimento' }}
+    env:
+      AMBIENTE: ${{ github.ref_name == 'main' && 'prod' || github.ref_name == 'homolog' && 'homolog' || 'dev' }}
+      AWS_REGION: ${{ vars.AWS_REGION || 'sa-east-1' }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - id: ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build e push das imagens
+        env:
+          REGISTRO: ${{ steps.ecr.outputs.registry }}
+          TAG: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          for alvo in api migracao; do
+            docker buildx build --push -f apps/api/Dockerfile --target "$alvo" \
+              -t "$REGISTRO/estoque-$AMBIENTE-$alvo:$TAG" .
+          done
+          docker buildx build --push -f apps/web/Dockerfile -t "$REGISTRO/estoque-$AMBIENTE-web:$TAG" .
+
+      - name: Migrações do banco (tarefa ECS avulsa)
+        env:
+          REGISTRO: ${{ steps.ecr.outputs.registry }}
+        run: |
+          set -euo pipefail
+          CLUSTER="estoque-$AMBIENTE"
+          DEF=$(aws ecs describe-task-definition --task-definition "estoque-$AMBIENTE-migracao" --query taskDefinition)
+          NOVA=$(echo "$DEF" | jq --arg img "$REGISTRO/estoque-$AMBIENTE-migracao:${{ github.sha }}" \
+            '.containerDefinitions[0].image=$img | {family, taskRoleArn, executionRoleArn, networkMode, containerDefinitions, requiresCompatibilities, cpu, memory}')
+          ARN=$(aws ecs register-task-definition --cli-input-json "$NOVA" --query taskDefinition.taskDefinitionArn --output text)
+          REDE=$(aws ecs describe-services --cluster "$CLUSTER" --services "estoque-$AMBIENTE-api" \
+            --query 'services[0].networkConfiguration' --output json)
+          TAREFA=$(aws ecs run-task --cluster "$CLUSTER" --launch-type FARGATE --task-definition "$ARN" \
+            --network-configuration "$REDE" --query 'tasks[0].taskArn' --output text)
+          aws ecs wait tasks-stopped --cluster "$CLUSTER" --tasks "$TAREFA"
+          CODIGO=$(aws ecs describe-tasks --cluster "$CLUSTER" --tasks "$TAREFA" --query 'tasks[0].containers[0].exitCode' --output text)
+          test "$CODIGO" = "0" || { echo "Migração falhou (código $CODIGO)"; exit 1; }
+
+      - name: Atualizar serviços ECS (deploy contínuo com rollback automático)
+        env:
+          REGISTRO: ${{ steps.ecr.outputs.registry }}
+        run: |
+          set -euo pipefail
+          CLUSTER="estoque-$AMBIENTE"
+          for servico in api worker web; do
+            imagem="api"; [ "$servico" = "web" ] && imagem="web"
+            DEF=$(aws ecs describe-task-definition --task-definition "estoque-$AMBIENTE-$servico" --query taskDefinition)
+            NOVA=$(echo "$DEF" | jq --arg img "$REGISTRO/estoque-$AMBIENTE-$imagem:${{ github.sha }}" \
+              '.containerDefinitions[0].image=$img | {family, taskRoleArn, executionRoleArn, networkMode, containerDefinitions, requiresCompatibilities, cpu, memory}')
+            ARN=$(aws ecs register-task-definition --cli-input-json "$NOVA" --query taskDefinition.taskDefinitionArn --output text)
+            aws ecs update-service --cluster "$CLUSTER" --service "estoque-$AMBIENTE-$servico" --task-definition "$ARN" >/dev/null
+          done
+          aws ecs wait services-stable --cluster "$CLUSTER" --services "estoque-$AMBIENTE-api" "estoque-$AMBIENTE-worker" "estoque-$AMBIENTE-web"
+
+      - name: Verificação pós-deploy
+        run: curl -fsS "${{ vars.URL_APLICACAO }}/api/health/pronto"
+
+  zap:
+    name: OWASP ZAP (baseline) em homologação
+    needs: deploy
+    if: github.ref_name == 'homolog'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: zaproxy/action-baseline@v0.14.0
+        with:
+          target: ${{ vars.URL_HOMOLOGACAO }}
+          fail_action: true
+          allow_issue_writing: false

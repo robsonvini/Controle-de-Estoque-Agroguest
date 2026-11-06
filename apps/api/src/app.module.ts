@@ -7,6 +7,7 @@ import { AutenticacaoGuard, PermissoesGuard } from './common/auth/guards';
 import { FiltroErros } from './common/filtro-erros';
 import { IdempotenciaInterceptor } from './common/idempotencia';
 import { NucleoModule } from './common/nucleo.module';
+import { env } from './config/env';
 import { opcoesLogger } from './config/logger';
 import { PrismaModule } from './prisma/prisma.service';
 import { DOMINIO_MODULES } from './modules/dominio';
@@ -14,7 +15,7 @@ import { DOMINIO_MODULES } from './modules/dominio';
 @Module({
   imports: [
     LoggerModule.forRoot(opcoesLogger),
-    ThrottlerModule.forRoot([{ name: 'default', ttl: 60_000, limit: 600 }]),
+    ThrottlerModule.forRoot([{ name: 'default', ttl: 60_000, limit: env.RATE_LIMIT_POR_MINUTO }]),
     PrismaModule,
     NucleoModule,
     ...DOMINIO_MODULES,

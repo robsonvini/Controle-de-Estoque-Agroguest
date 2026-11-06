@@ -12,6 +12,8 @@ const schema = z.object({
   WEB_ORIGIN: z.string().default('http://localhost:3000'),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace']).default('info'),
   TRUST_PROXY: booleano,
+  /** Limite global de requisições por minuto por IP (rate limit). */
+  RATE_LIMIT_POR_MINUTO: z.coerce.number().int().min(10).max(1_000_000).default(600),
 
   DATABASE_URL: z.string().min(1, 'DATABASE_URL é obrigatória'),
 
@@ -22,6 +24,8 @@ const schema = z.object({
   ACCESS_TOKEN_TTL_SEGUNDOS: z.coerce.number().int().min(60).max(3600).default(900),
   REFRESH_TOKEN_TTL_DIAS: z.coerce.number().int().min(1).max(30).default(7),
   COOKIE_SECURE: booleano,
+  /** Somente para executar a imagem de produção localmente sem HTTPS. Nunca habilite em servidores. */
+  PERMITIR_HTTP_INSEGURO: booleano,
   LOGIN_MAX_TENTATIVAS: z.coerce.number().int().min(3).max(20).default(5),
   /** Tentativas de login por minuto por IP (rate limit). */
   LOGIN_LIMITE_POR_MINUTO: z.coerce.number().int().min(1).max(10000).default(10),
@@ -78,6 +82,12 @@ function carregar(): Env {
     throw new Error(`Configuração de ambiente inválida:\n${erros.join('\n')}`);
   }
   if (resultado.data.NODE_ENV === 'production' && !resultado.data.COOKIE_SECURE) {
+    if (resultado.data.PERMITIR_HTTP_INSEGURO) {
+      console.warn(
+        'ATENÇÃO: cookies sem a flag Secure (PERMITIR_HTTP_INSEGURO=true). Use apenas localmente.',
+      );
+      return resultado.data;
+    }
     throw new Error('Em produção, COOKIE_SECURE deve ser true (HTTPS obrigatório).');
   }
   return resultado.data;
