@@ -52,7 +52,9 @@ COPY --from=build /app/apps/api/dist ./apps/api/dist
 COPY --from=build /app/apps/api/prisma ./apps/api/prisma
 COPY --from=build /app/apps/api/prisma.config.ts ./apps/api/prisma.config.ts
 COPY --from=build /app/apps/api/src/generated ./apps/api/src/generated
+COPY --from=build /app/apps/api/start-render.sh ./apps/api/start-render.sh
 RUN chown -R node:node /app/node_modules /app/apps
+RUN chmod +x ./apps/api/start-render.sh
 WORKDIR /app/apps/api
 USER node
 EXPOSE 3333
