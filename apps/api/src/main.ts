@@ -6,7 +6,8 @@ import { env } from './config/env';
 import { configurarApp, gerarOpenApi } from './configurar-app';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { bufferLogs: true });
+  // rawBody: necessário para validar a assinatura HMAC dos webhooks
+  const app = await NestFactory.create(AppModule, { bufferLogs: true, rawBody: true });
   app.useLogger(app.get(Logger));
   configurarApp(app);
 
