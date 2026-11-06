@@ -1,0 +1,95 @@
+databases:
+  - name: estoque-db
+    plan: free
+    databaseName: estoque
+    user: estoque
+
+services:
+  - type: web
+    name: estoque-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./apps/api/Dockerfile
+    dockerContext: .
+    dockerCommand: sh -c "npx prisma migrate deploy && npx prisma db seed && node dist/main.js"
+    healthCheckPath: /api/health/pronto
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: '3333'
+      - key: DATABASE_URL
+        fromDatabase:
+          name: estoque-db
+          property: connectionString
+      - key: WEB_ORIGIN
+        value: https://estoque-web.onrender.com
+      - key: TRUST_PROXY
+        value: 'true'
+      - key: COOKIE_SECURE
+        value: 'true'
+      - key: JWT_ACCESS_SECRET
+        generateValue: true
+      - key: JWT_INTEGRACAO_SECRET
+        generateValue: true
+      - key: CRYPTO_KEY
+        generateValue: true
+      - key: SEED_ADMIN_EMAIL
+        sync: false
+      - key: SEED_ADMIN_SENHA
+        sync: false
+      - key: S3_BUCKET
+        value: estoque-arquivos
+      - key: S3_REGION
+        value: us-east-1
+      - key: EMAIL_HABILITADO
+        value: 'false'
+      - key: CRM_BASE_URL
+        sync: false
+
+  - type: worker
+    name: estoque-worker
+    runtime: docker
+    plan: free
+    dockerfilePath: ./apps/api/Dockerfile
+    dockerContext: .
+    dockerCommand: node dist/main-worker.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: estoque-db
+          property: connectionString
+      - key: WEB_ORIGIN
+        value: https://estoque-web.onrender.com
+      - key: TRUST_PROXY
+        value: 'true'
+      - key: COOKIE_SECURE
+        value: 'true'
+      - key: JWT_ACCESS_SECRET
+        fromService:
+          type: web
+          name: estoque-api
+          envVarKey: JWT_ACCESS_SECRET
+      - key: JWT_INTEGRACAO_SECRET
+        fromService:
+          type: web
+          name: estoque-api
+          envVarKey: JWT_INTEGRACAO_SECRET
+      - key: CRYPTO_KEY
+        fromService:
+          type: web
+          name: estoque-api
+          envVarKey: CRYPTO_KEY
+
+  - type: web
+    name: estoque-web
+    runtime: docker
+    plan: free
+    dockerfilePath: ./apps/web/Dockerfile
+    dockerContext: .
+    healthCheckPath: /login
+    envVars:
+      - key: API_INTERNAL_URL
+        value: http://estoque-api:3333

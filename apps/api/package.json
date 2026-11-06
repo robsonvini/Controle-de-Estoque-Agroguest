@@ -46,8 +46,10 @@
     "pg": "^8.16.3",
     "pino": "^10.1.0",
     "pino-http": "^11.0.0",
+    "prisma": "^7.10.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
+    "tsx": "^4.20.6",
     "zod": "^4.1.12"
   },
   "devDependencies": {
@@ -64,9 +66,7 @@
     "@types/pg": "^8.15.6",
     "@types/supertest": "^6.0.3",
     "pino-pretty": "^13.1.2",
-    "prisma": "7.10.1",
     "supertest": "^7.1.4",
-    "tsx": "^4.20.6",
     "typescript": "5.9.3",
     "unplugin-swc": "^2.0.0",
     "vitest": "^4.0.8"
