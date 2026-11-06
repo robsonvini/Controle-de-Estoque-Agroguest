@@ -4,8 +4,11 @@ O arquivo [`render.yaml`](../render.yaml) descreve a publicação sem AWS:
 
 - PostgreSQL persistente;
 - API NestJS com migrations e seed no início;
-- worker de processamento;
 - frontend Next.js com proxy interno para a API.
+
+No plano gratuito, o worker não é criado porque o Render não permite serviços
+`background worker` nesse plano. O sistema principal funciona, mas tarefas automáticas
+em segundo plano ficam desativadas até o worker ser contratado.
 
 ## Configuração
 
