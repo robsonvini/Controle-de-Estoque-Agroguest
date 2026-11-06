@@ -56,4 +56,4 @@ services:
     healthCheckPath: /login
     envVars:
       - key: API_INTERNAL_URL
-        value: http://estoque-api:3333
+        value: https://estoque-api.onrender.com

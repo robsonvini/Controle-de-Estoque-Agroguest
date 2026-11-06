@@ -17,7 +17,7 @@ RUN --mount=type=cache,target=/root/.npm npm ci --no-audit --no-fund
 
 FROM dependencias AS build
 # Destino interno da API para o rewrite /api/* (em produção o ALB encaminha /api/* direto à API)
-ARG API_INTERNAL_URL=http://estoque-api:3333
+ARG API_INTERNAL_URL=https://estoque-api.onrender.com
 ENV API_INTERNAL_URL=$API_INTERNAL_URL
 COPY tsconfig.base.json ./
 COPY packages/shared packages/shared
