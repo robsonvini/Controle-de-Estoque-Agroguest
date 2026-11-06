@@ -1,0 +1,49 @@
+# Serviços de apoio para desenvolvimento local.
+# Uso: npm run infra:up
+name: estoque-agrogest
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: estoque
+      POSTGRES_PASSWORD: estoque_dev
+      POSTGRES_DB: estoque
+      TZ: UTC
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U estoque -d estoque']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  # Armazenamento de objetos compatível com S3 (imagens de produtos).
+  # Apenas para desenvolvimento; na AWS é usado o Amazon S3.
+  # O bucket é criado pela API na inicialização quando S3_ENDPOINT está definido.
+  s3:
+    image: adobe/s3mock:latest
+    restart: unless-stopped
+    ports:
+      - '9090:9090'
+    volumes:
+      - s3data:/s3mockroot
+    environment:
+      COM_ADOBE_TESTING_S3MOCK_STORE_ROOT: /s3mockroot
+      COM_ADOBE_TESTING_S3MOCK_STORE_RETAIN_FILES_ON_EXIT: 'true'
+
+  # Captura de e-mails de notificação em desenvolvimento (UI em http://localhost:8026)
+  mailpit:
+    image: axllent/mailpit:latest
+    restart: unless-stopped
+    ports:
+      - '2525:1025'
+      - '8026:8025'
+
+volumes:
+  pgdata:
+  s3data:
