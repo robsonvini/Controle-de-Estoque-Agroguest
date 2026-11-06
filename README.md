@@ -60,6 +60,7 @@ docs/               Documentação técnica, OpenAPI e manual do usuário
 | [docs/api.md](docs/api.md)                       | Convenções da API REST e [OpenAPI](docs/openapi.json)            |
 | [docs/instalacao.md](docs/instalacao.md)         | Instalação, configuração, execução e manutenção                  |
 | [docs/deploy-aws.md](docs/deploy-aws.md)         | Publicação na AWS, ambientes, backups e recuperação de desastres |
+| [docs/deploy-render.md](docs/deploy-render.md)   | Publicação alternativa no Render com PostgreSQL                  |
 | [docs/seguranca-lgpd.md](docs/seguranca-lgpd.md) | Controles de segurança e adequação à LGPD                        |
 | [docs/testes.md](docs/testes.md)                 | Estratégia de testes e como executá-los                          |
 | [docs/manual-usuario.md](docs/manual-usuario.md) | Manual de utilização                                             |
