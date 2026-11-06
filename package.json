@@ -1,0 +1,48 @@
+{
+  "name": "estoque-agrogest",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Sistema web de gestão e controle de estoque integrado ao CRM Agrogest",
+  "workspaces": [
+    "packages/*",
+    "apps/*",
+    "tools/*"
+  ],
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "infra:up": "docker compose -f infra/docker-compose.yml up -d",
+    "infra:down": "docker compose -f infra/docker-compose.yml down",
+    "build:shared": "npm run build -w @estoque/shared",
+    "build": "npm run build:shared && npm run build -w @estoque/api && npm run build -w @estoque/web",
+    "dev": "npm run build:shared && concurrently -k -n shared,api,worker,web -c gray,blue,magenta,green \"npm run dev -w @estoque/shared\" \"npm run dev -w @estoque/api\" \"npm run dev:worker -w @estoque/api\" \"npm run dev -w @estoque/web\"",
+    "db:migrate": "npm run db:migrate -w @estoque/api",
+    "db:deploy": "npm run db:deploy -w @estoque/api",
+    "db:seed": "npm run db:seed -w @estoque/api",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "npm run build:shared && npm run typecheck --workspaces --if-present",
+    "test": "npm run build:shared && npm run test --workspaces --if-present",
+    "test:e2e": "npm run test:e2e -w @estoque/web",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^20.1.0",
+    "@commitlint/config-conventional": "^20.0.0",
+    "@eslint/js": "^9.39.0",
+    "concurrently": "^9.2.1",
+    "eslint": "^9.39.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^16.5.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.6",
+    "prettier": "^3.6.2",
+    "typescript": "5.9.3",
+    "typescript-eslint": "^8.46.2"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,mjs,json,md,css}": "prettier --write"
+  }
+}

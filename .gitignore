@@ -1,0 +1,39 @@
+node_modules/
+dist/
+build/
+.next/
+out/
+coverage/
+*.tsbuildinfo
+.turbo/
+
+# Prisma Client gerado
+apps/api/src/generated/
+
+# Ambiente e segredos (nunca versionar)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Terraform
+infra/terraform/**/.terraform/
+infra/terraform/**/*.tfstate
+infra/terraform/**/*.tfstate.*
+infra/terraform/**/*.tfvars
+!infra/terraform/**/*.tfvars.example
+
+# Testes
+apps/web/test-results/
+apps/web/playwright-report/
+apps/web/blob-report/
+tests/perf/results/
+
+# SO / editores
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.log

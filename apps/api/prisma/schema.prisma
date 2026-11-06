@@ -1,0 +1,1014 @@
+// =====================================================================
+// Estoque Agrogest — modelo de dados (PostgreSQL)
+// Regras de integridade adicionais (CHECKs, triggers de imutabilidade e
+// índices parciais) estão na migration "regras_integridade".
+// =====================================================================
+
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------
+
+enum StatusProduto {
+  ATIVO
+  INATIVO
+}
+
+enum TipoPessoa {
+  PF
+  PJ
+}
+
+enum SituacaoFornecedor {
+  ATIVO
+  INATIVO
+  BLOQUEADO
+}
+
+enum TipoLocal {
+  DEPOSITO
+  AREA
+  POSICAO
+}
+
+enum TipoMovimentacao {
+  ENTRADA
+  SAIDA
+  TRANSFERENCIA
+  AJUSTE
+  ESTORNO
+}
+
+enum MotivoMovimentacao {
+  COMPRA
+  RECEBIMENTO
+  DEVOLUCAO_CLIENTE
+  AJUSTE_POSITIVO
+  VENDA
+  CONSUMO_INTERNO
+  PERDA
+  AVARIA
+  DEVOLUCAO_FORNECEDOR
+  AJUSTE_NEGATIVO
+  TRANSFERENCIA
+  AJUSTE_INVENTARIO
+  ESTORNO
+}
+
+enum OrigemMovimentacao {
+  MANUAL
+  COMPRA
+  PEDIDO_VENDA
+  AJUSTE
+  ESTORNO
+}
+
+enum StatusPedidoCompra {
+  RASCUNHO
+  ENVIADO
+  PARCIALMENTE_RECEBIDO
+  RECEBIDO
+  CANCELADO
+}
+
+enum StatusPedido {
+  RESERVADO
+  CONFIRMADO
+  CANCELADO
+}
+
+enum OrigemPedido {
+  MANUAL
+  CRM_API
+}
+
+enum StatusReserva {
+  ATIVA
+  CONSUMIDA
+  LIBERADA
+}
+
+enum StatusInventario {
+  EM_CONTAGEM
+  EM_REVISAO
+  FINALIZADO
+  CANCELADO
+}
+
+enum StatusAjuste {
+  PENDENTE
+  APROVADO
+  REJEITADO
+}
+
+enum OrigemAjuste {
+  MANUAL
+  INVENTARIO
+}
+
+enum TipoNotificacao {
+  ESTOQUE_MINIMO
+  ESTOQUE_ESGOTADO
+  REPOSICAO
+  MOVIMENTACAO_ATIPICA
+  FALHA_SINCRONIZACAO
+  DIVERGENCIA_INVENTARIO
+  AJUSTE_PENDENTE
+}
+
+enum Severidade {
+  INFO
+  ALERTA
+  CRITICA
+}
+
+enum StatusTarefa {
+  PENDENTE
+  PROCESSANDO
+  CONCLUIDA
+  FALHOU
+}
+
+enum StatusExecucao {
+  EM_ANDAMENTO
+  SUCESSO
+  FALHA
+}
+
+enum DirecaoIntegracao {
+  ENTRADA
+  SAIDA
+}
+
+enum StatusEventoRecebido {
+  RECEBIDO
+  PROCESSADO
+  IGNORADO
+  ERRO
+}
+
+// ---------------------------------------------------------------------
+// Acesso, perfis e auditoria
+// ---------------------------------------------------------------------
+
+model Usuario {
+  id               String    @id @default(uuid(7)) @db.Uuid
+  nome             String    @db.VarChar(120)
+  email            String    @unique @db.VarChar(160)
+  senhaHash        String    @map("senha_hash") @db.VarChar(255)
+  perfilId         String    @map("perfil_id") @db.Uuid
+  ativo            Boolean   @default(true)
+  /// "local" ou identificador do provedor de SSO (ex.: "crm-oidc")
+  provedorAuth     String    @default("local") @map("provedor_auth") @db.VarChar(30)
+  idExterno        String?   @map("id_externo") @db.VarChar(100)
+  tentativasFalhas Int       @default(0) @map("tentativas_falhas")
+  bloqueadoAte     DateTime? @map("bloqueado_ate") @db.Timestamptz(3)
+  deveTrocarSenha  Boolean   @default(false) @map("deve_trocar_senha")
+  ultimoLoginEm    DateTime? @map("ultimo_login_em") @db.Timestamptz(3)
+  anonimizadoEm    DateTime? @map("anonimizado_em") @db.Timestamptz(3)
+  criadoEm         DateTime  @default(now()) @map("criado_em") @db.Timestamptz(3)
+  atualizadoEm     DateTime  @updatedAt @map("atualizado_em") @db.Timestamptz(3)
+
+  perfil                Perfil          @relation(fields: [perfilId], references: [id])
+  sessoes               Sessao[]
+  movimentacoes         Movimentacao[]
+  ajustesSolicitados    Ajuste[]        @relation("AjusteSolicitante")
+  ajustesDecididos      Ajuste[]        @relation("AjusteDecisor")
+  inventariosCriados    Inventario[]
+  contagens             InventarioItem[]
+  pedidosCompra         PedidoCompra[]
+  pedidos               Pedido[]
+  leiturasNotificacao   NotificacaoLeitura[]
+  clientesApiCriados    ClienteApi[]
+
+  @@unique([provedorAuth, idExterno])
+  @@index([perfilId])
+  @@map("usuarios")
+}
+
+model Perfil {
+  id           String   @id @default(uuid(7)) @db.Uuid
+  nome         String   @unique @db.VarChar(60)
+  descricao    String?  @db.VarChar(200)
+  /// Perfis de sistema (criados pelo seed) não podem ser excluídos
+  sistema      Boolean  @default(false)
+  criadoEm     DateTime @default(now()) @map("criado_em") @db.Timestamptz(3)
+  atualizadoEm DateTime @updatedAt @map("atualizado_em") @db.Timestamptz(3)
+
+  permissoes PerfilPermissao[]
+  usuarios   Usuario[]
+
+  @@map("perfis")
+}
+
+model Permissao {
+  /// Formato modulo:acao (ex.: "produtos:escrever")
+  codigo    String @id @db.VarChar(60)
+  modulo    String @db.VarChar(40)
+  descricao String @db.VarChar(200)
+
+  perfis PerfilPermissao[]
+
+  @@map("permissoes")
+}
+
+model PerfilPermissao {
+  perfilId        String @map("perfil_id") @db.Uuid
+  permissaoCodigo String @map("permissao_codigo") @db.VarChar(60)
+
+  perfil    Perfil    @relation(fields: [perfilId], references: [id], onDelete: Cascade)
+  permissao Permissao @relation(fields: [permissaoCodigo], references: [codigo], onDelete: Cascade)
+
+  @@id([perfilId, permissaoCodigo])
+  @@map("perfil_permissoes")
+}
+
+model Sessao {
+  id               String    @id @default(uuid(7)) @db.Uuid
+  usuarioId        String    @map("usuario_id") @db.Uuid
+  /// Identifica a cadeia de rotação; reuso de token revoga a família inteira
+  familia          String    @db.Uuid
+  refreshTokenHash String    @unique @map("refresh_token_hash") @db.VarChar(128)
+  expiraEm         DateTime  @map("expira_em") @db.Timestamptz(3)
+  revogadaEm       DateTime? @map("revogada_em") @db.Timestamptz(3)
+  motivoRevogacao  String?   @map("motivo_revogacao") @db.VarChar(60)
+  substituidaEm    DateTime? @map("substituida_em") @db.Timestamptz(3)
+  ip               String?   @db.VarChar(64)
+  userAgent        String?   @map("user_agent") @db.VarChar(300)
+  criadoEm         DateTime  @default(now()) @map("criado_em") @db.Timestamptz(3)
+  ultimoUsoEm      DateTime  @default(now()) @map("ultimo_uso_em") @db.Timestamptz(3)
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId])
+  @@index([familia])
+  @@map("sessoes")
+}
+
+/// Registro de atividades (imutável — protegido por trigger)
+model LogAuditoria {
+  id           BigInt   @id @default(autoincrement())
+  usuarioId    String?  @map("usuario_id") @db.Uuid
+  clienteApiId String?  @map("cliente_api_id") @db.Uuid
+  acao         String   @db.VarChar(60)
+  entidade     String   @db.VarChar(60)
+  entidadeId   String?  @map("entidade_id") @db.VarChar(100)
+  dados        Json?
+  ip           String?  @db.VarChar(64)
+  userAgent    String?  @map("user_agent") @db.VarChar(300)
+  criadoEm     DateTime @default(now()) @map("criado_em") @db.Timestamptz(3)
+
+  @@index([entidade, entidadeId])
+  @@index([usuarioId, criadoEm])
+  @@index([criadoEm])
+  @@map("logs_auditoria")
+}
+
+// ---------------------------------------------------------------------
+// Cadastros
+// ---------------------------------------------------------------------
+
+model Categoria {
+  id           String   @id @default(uuid(7)) @db.Uuid
+  nome         String   @db.VarChar(80)
+  descricao    String?  @db.VarChar(200)
+  paiId        String?  @map("pai_id") @db.Uuid
+  ativo        Boolean  @default(true)
+  criadoEm     DateTime @default(now()) @map("criado_em") @db.Timestamptz(3)
+  atualizadoEm DateTime @updatedAt @map("atualizado_em") @db.Timestamptz(3)
+
+  pai         Categoria?   @relation("Subcategorias", fields: [paiId], references: [id], onDelete: Restrict)
+  filhas      Categoria[]  @relation("Subcategorias")
+  produtos    Produto[]
+  inventarios Inventario[]
+
+  @@index([paiId])
+  @@map("categorias")
+}
+
+model UnidadeMedida {
+  id            String   @id @default(uuid(7)) @db.Uuid
+  sigla         String   @unique @db.VarChar(10)
+  nome          String   @db.VarChar(60)
+  casasDecimais Int      @default(0) @map("casas_decimais")
+  ativo         Boolean  @default(true)
+  criadoEm      DateTime @default(now()) @map("criado_em") @db.Timestamptz(3)
+  atualizadoEm  DateTime @updatedAt @map("atualizado_em") @db.Timestamptz(3)
+
+  produtos Produto[]
+
+  @@map("unidades_medida")
+}
+
+model LocalArmazenamento {
+  id           String    @id @default(uuid(7)) @db.Uuid
+  codigo       String    @unique @db.VarChar(30)
+  nome         String    @db.VarChar(100)
+  descricao    String?   @db.VarChar(200)
+  tipo         TipoLocal
+  paiId        String?   @map("pai_id") @db.Uuid
+  ativo        Boolean   @default(true)
+  criadoEm     DateTime  @default(now()) @map("criado_em") @db.Timestamptz(3)
+  atualizadoEm DateTime  @updatedAt @map("atualizado_em") @db.Timestamptz(3)
+
+  pai              LocalArmazenamento?  @relation("SubLocais", fields: [paiId], references: [id], onDelete: Restrict)
+  filhos           LocalArmazenamento[] @relation("SubLocais")
+  saldos           SaldoEstoque[]
+  produtosPadrao   Produto[]
+  itensOrigem      MovimentacaoItem[]   @relation("ItemLocalOrigem")
+  itensDestino     MovimentacaoItem[]   @relation("ItemLocalDestino")
+  pedidoItens      PedidoItem[]
+  reservas         Reserva[]
+  inventarios      Inventario[]
+  inventarioItens  InventarioItem[]
+  ajusteItens      AjusteItem[]
+
+  @@index([paiId])
+  @@map("locais_armazenamento")
+}
+
+model Produto {
+  id              String        @id @default(uuid(7)) @db.Uuid
+  codigoInterno   String        @unique @map("codigo_interno") @db.VarChar(30)
+  sku             String        @unique @db.VarChar(50)
+  codigoBarras    String?       @unique @map("codigo_barras") @db.VarChar(50)
+  nome            String        @db.VarChar(150)
+  descricao       String?
+  categoriaId     String?       @map("categoria_id") @db.Uuid
+  unidadeMedidaId String        @map("unidade_medida_id") @db.Uuid
+  precoCusto      Decimal       @default(0) @map("preco_custo") @db.Decimal(18, 4)
+  precoVenda      Decimal       @default(0) @map("preco_venda") @db.Decimal(18, 4)
+  /// Custo médio ponderado, recalculado a cada entrada valorizada
+  custoMedio      Decimal       @default(0) @map("custo_medio") @db.Decimal(18, 4)
+  estoqueMinimo   Decimal       @default(0) @map("estoque_minimo") @db.Decimal(18, 4)
+  estoqueMaximo   Decimal?      @map("estoque_maximo") @db.Decimal(18, 4)
+  localPadraoId   String?       @map("local_padrao_id") @db.Uuid
+  status          StatusProduto @default(ATIVO)
+  /// Vínculo com registro correspondente no CRM, quando o CRM passar a ter catálogo
+  idExternoCrm    String?       @unique @map("id_externo_crm") @db.VarChar(100)
+  criadoEm        DateTime      @default(now()) @map("criado_em") @db.Timestamptz(3)
+  atualizadoEm    DateTime      @updatedAt @map("atualizado_em") @db.Timestamptz(3)
+
+  categoria         Categoria?          @relation(fields: [categoriaId], references: [id], onDelete: SetNull)
+  unidadeMedida     UnidadeMedida       @relation(fields: [unidadeMedidaId], references: [id])
+  localPadrao       LocalArmazenamento? @relation(fields: [localPadraoId], references: [id], onDelete: SetNull)
+  imagens           ProdutoImagem[]
+  fornecedores      ProdutoFornecedor[]
+  saldos            SaldoEstoque[]
+  movimentacaoItens MovimentacaoItem[]
+  pedidoCompraItens PedidoCompraItem[]
+  pedidoItens       PedidoItem[]
+  reservas          Reserva[]
+  inventarioItens   InventarioItem[]
+  ajusteItens       AjusteItem[]
+
+  @@index([categoriaId])
+  @@index([status])
+  @@index([nome])
+  @@map("produtos")
+}
+
+model ProdutoImagem {
+  id               String   @id @default(uuid(7)) @db.Uuid
+  produtoId        String   @map("produto_id") @db.Uuid
+  chave            String   @unique @db.VarChar(300)
+  nomeArquivo      String   @map("nome_arquivo") @db.VarChar(200)
+  mimeType         String   @map("mime_type") @db.VarChar(60)
+  tamanhoBytes     Int      @map("tamanho_bytes")
+  textoAlternativo String   @map("texto_alternativo") @db.VarChar(200)
+  ordem            Int      @default(0)
+  criadoEm         DateTime @default(now()) @map("criado_em") @db.Timestamptz(3)
+
+  produto Produto @relation(fields: [produtoId], references: [id], onDelete: Cascade)
+
+  @@index([produtoId])
+  @@map("produto_imagens")
+}
+
+model Fornecedor {
+  id                String             @id @default(uuid(7)) @db.Uuid
+  tipoPessoa        TipoPessoa         @map("tipo_pessoa")
+  /// CPF ou CNPJ, somente dígitos
+  documento         String             @unique @db.VarChar(14)
+  razaoSocial       String             @map("razao_social") @db.VarChar(200)
+  nomeFantasia      String?            @map("nome_fantasia") @db.VarChar(200)
+  inscricaoEstadual String?            @map("inscricao_estadual") @db.VarChar(30)
+  email             String?            @db.VarChar(160)
+  telefone          String?            @db.VarChar(20)
+  cep               String?            @db.VarChar(8)
+  logradouro        String?            @db.VarChar(200)
+  numero            String?            @db.VarChar(20)
+  complemento       String?            @db.VarChar(100)
+  bairro            String?            @db.VarChar(100)
+  cidade            String?            @db.VarChar(100)
+  uf                String?            @db.Char(2)
+  situacao          SituacaoFornecedor @default(ATIVO)
+  observacoes       String?
+  anonimizadoEm     DateTime?          @map("anonimizado_em") @db.Timestamptz(3)
+  criadoEm          DateTime           @default(now()) @map("criado_em") @db.Timestamptz(3)
+  atualizadoEm      DateTime           @updatedAt @map("atualizado_em") @db.Timestamptz(3)
+
+  contatos      FornecedorContato[]
+  produtos      ProdutoFornecedor[]
+  pedidosCompra PedidoCompra[]
+  entradas      Entrada[]
+  saidas        Saida[]
+
+  @@index([razaoSocial])
+  @@map("fornecedores")
+}
+
+model FornecedorContato {
+  id           String  @id @default(uuid(7)) @db.Uuid
+  fornecedorId String  @map("fornecedor_id") @db.Uuid
+  nome         String  @db.VarChar(120)
+  cargo        String? @db.VarChar(80)
+  email        String? @db.VarChar(160)
+  telefone     String? @db.VarChar(20)
+
+  fornecedor Fornecedor @relation(fields: [fornecedorId], references: [id], onDelete: Cascade)
+
+  @@index([fornecedorId])
+  @@map("fornecedor_contatos")
+}
+
+model ProdutoFornecedor {
+  produtoId          String   @map("produto_id") @db.Uuid
+  fornecedorId       String   @map("fornecedor_id") @db.Uuid
+  codigoNoFornecedor String?  @map("codigo_no_fornecedor") @db.VarChar(50)
+  prazoEntregaDias   Int?     @map("prazo_entrega_dias")
+  principal          Boolean  @default(false)
+  ultimoPrecoCompra  Decimal? @map("ultimo_preco_compra") @db.Decimal(18, 4)
+
+  produto    Produto    @relation(fields: [produtoId], references: [id], onDelete: Cascade)
+  fornecedor Fornecedor @relation(fields: [fornecedorId], references: [id], onDelete: Restrict)
+
+  @@id([produtoId, fornecedorId])
+  @@index([fornecedorId])
+  @@map("produto_fornecedores")
+}
+
+// ---------------------------------------------------------------------
+// Estoque: saldos e livro-razão de movimentações
+// ---------------------------------------------------------------------
+
+/// Saldo materializado por produto e local. Alterado somente pelo motor de estoque.
+model SaldoEstoque {
+  produtoId    String   @map("produto_id") @db.Uuid
+  localId      String   @map("local_id") @db.Uuid
+  quantidade   Decimal  @default(0) @db.Decimal(18, 4)
+  reservado    Decimal  @default(0) @db.Decimal(18, 4)
+  atualizadoEm DateTime @default(now()) @map("atualizado_em") @db.Timestamptz(3)
+
+  produto Produto            @relation(fields: [produtoId], references: [id], onDelete: Restrict)
+  local   LocalArmazenamento @relation(fields: [localId], references: [id], onDelete: Restrict)
+
+  @@id([produtoId, localId])
+  @@index([localId])
+  @@map("saldos_estoque")
+}
+
+/// Cabeçalho da movimentação (imutável — protegido por trigger)
+model Movimentacao {
+  id               String             @id @default(uuid(7)) @db.Uuid
+  numero           BigInt             @unique @default(autoincrement())
+  tipo             TipoMovimentacao
+  motivo           MotivoMovimentacao
+  origem           OrigemMovimentacao @default(MANUAL)
+  dataMovimentacao DateTime           @default(now()) @map("data_movimentacao") @db.Timestamptz(3)
+  usuarioId        String?            @map("usuario_id") @db.Uuid
+  clienteApiId     String?            @map("cliente_api_id") @db.Uuid
+  observacao       String?            @db.VarChar(1000)
+  valorTotal       Decimal            @default(0) @map("valor_total") @db.Decimal(18, 2)
+  /// Movimentação original, quando esta for um estorno
+  estornoDeId      String?            @unique @map("estorno_de_id") @db.Uuid
+  pedidoId         String?            @map("pedido_id") @db.Uuid
+  ajusteId         String?            @unique @map("ajuste_id") @db.Uuid
+  criadoEm         DateTime           @default(now()) @map("criado_em") @db.Timestamptz(3)
+
+  usuario    Usuario?           @relation(fields: [usuarioId], references: [id], onDelete: Restrict)
+  clienteApi ClienteApi?        @relation(fields: [clienteApiId], references: [id], onDelete: Restrict)
+  estornoDe  Movimentacao?      @relation("Estorno", fields: [estornoDeId], references: [id], onDelete: Restrict)
+  estornadaPor Movimentacao?    @relation("Estorno")
+  pedido     Pedido?            @relation(fields: [pedidoId], references: [id], onDelete: Restrict)
+  ajuste     Ajuste?            @relation(fields: [ajusteId], references: [id], onDelete: Restrict)
+  itens      MovimentacaoItem[]
+  entrada    Entrada?
+  saida      Saida?
+
+  @@index([tipo, dataMovimentacao])
+  @@index([motivo, dataMovimentacao])
+  @@index([dataMovimentacao])
+  @@index([usuarioId])
+  @@index([pedidoId])
+  @@map("movimentacoes")
+}
+
+/// Item da movimentação. A direção é dada pelos locais:
+/// somente destino = entrada; somente origem = saída; ambos = transferência.
+model MovimentacaoItem {
+  id             String  @id @default(uuid(7)) @db.Uuid
+  movimentacaoId String  @map("movimentacao_id") @db.Uuid
+  produtoId      String  @map("produto_id") @db.Uuid
+  localOrigemId  String? @map("local_origem_id") @db.Uuid
+  localDestinoId String? @map("local_destino_id") @db.Uuid
+  quantidade     Decimal @db.Decimal(18, 4)
+  custoUnitario  Decimal @default(0) @map("custo_unitario") @db.Decimal(18, 4)
+  valorTotal     Decimal @default(0) @map("valor_total") @db.Decimal(18, 2)
+
+  movimentacao Movimentacao        @relation(fields: [movimentacaoId], references: [id], onDelete: Restrict)
+  produto      Produto             @relation(fields: [produtoId], references: [id], onDelete: Restrict)
+  localOrigem  LocalArmazenamento? @relation("ItemLocalOrigem", fields: [localOrigemId], references: [id], onDelete: Restrict)
+  localDestino LocalArmazenamento? @relation("ItemLocalDestino", fields: [localDestinoId], references: [id], onDelete: Restrict)
+
+  @@index([movimentacaoId])
+  @@index([produtoId])
+  @@map("movimentacao_itens")
+}
+
+/// Dados específicos de movimentações de entrada
+model Entrada {
+  movimentacaoId  String    @id @map("movimentacao_id") @db.Uuid
+  fornecedorId    String?   @map("fornecedor_id") @db.Uuid
+  clienteCrmId    String?   @map("cliente_crm_id") @db.Uuid
+  pedidoCompraId  String?   @map("pedido_compra_id") @db.Uuid
+  numeroDocumento String?   @map("numero_documento") @db.VarChar(60)
+  serieDocumento  String?   @map("serie_documento") @db.VarChar(10)
+  dataDocumento   DateTime? @map("data_documento") @db.Date
+
+  movimentacao Movimentacao  @relation(fields: [movimentacaoId], references: [id], onDelete: Restrict)
+  fornecedor   Fornecedor?   @relation(fields: [fornecedorId], references: [id], onDelete: Restrict)
+  clienteCrm   ClienteCrm?   @relation(fields: [clienteCrmId], references: [id], onDelete: Restrict)
+  pedidoCompra PedidoCompra? @relation(fields: [pedidoCompraId], references: [id], onDelete: Restrict)
+
+  @@index([fornecedorId])
+  @@index([pedidoCompraId])
+  @@index([numeroDocumento])
+  @@map("entradas")
+}
+
+/// Dados específicos de movimentações de saída
+model Saida {
+  movimentacaoId  String  @id @map("movimentacao_id") @db.Uuid
+  clienteCrmId    String? @map("cliente_crm_id") @db.Uuid
+  fornecedorId    String? @map("fornecedor_id") @db.Uuid
+  destino         String? @db.VarChar(120)
+  numeroDocumento String? @map("numero_documento") @db.VarChar(60)
+
+  movimentacao Movimentacao @relation(fields: [movimentacaoId], references: [id], onDelete: Restrict)
+  clienteCrm   ClienteCrm?  @relation(fields: [clienteCrmId], references: [id], onDelete: Restrict)
+  fornecedor   Fornecedor?  @relation(fields: [fornecedorId], references: [id], onDelete: Restrict)
+
+  @@index([clienteCrmId])
+  @@map("saidas")
+}
+
+// ---------------------------------------------------------------------
+// Compras
+// ---------------------------------------------------------------------
+
+model PedidoCompra {
+  id              String             @id @default(uuid(7)) @db.Uuid
+  numero          BigInt             @unique @default(autoincrement())
+  fornecedorId    String             @map("fornecedor_id") @db.Uuid
+  status          StatusPedidoCompra @default(RASCUNHO)
+  dataPedido      DateTime           @default(now()) @map("data_pedido") @db.Timestamptz(3)
+  previsaoEntrega DateTime?          @map("previsao_entrega") @db.Date
+  observacao      String?            @db.VarChar(1000)
+  valorTotal      Decimal            @default(0) @map("valor_total") @db.Decimal(18, 2)
+  motivoCancelamento String?         @map("motivo_cancelamento") @db.VarChar(500)
+  criadoPorId     String             @map("criado_por_id") @db.Uuid
+  criadoEm        DateTime           @default(now()) @map("criado_em") @db.Timestamptz(3)
+  atualizadoEm    DateTime           @updatedAt @map("atualizado_em") @db.Timestamptz(3)
+
+  fornecedor Fornecedor         @relation(fields: [fornecedorId], references: [id], onDelete: Restrict)
+  criadoPor  Usuario            @relation(fields: [criadoPorId], references: [id], onDelete: Restrict)
+  itens      PedidoCompraItem[]
+  entradas   Entrada[]
+
+  @@index([fornecedorId])
+  @@index([status])
+  @@map("pedidos_compra")
+}
+
+model PedidoCompraItem {
+  id                 String  @id @default(uuid(7)) @db.Uuid
+  pedidoCompraId     String  @map("pedido_compra_id") @db.Uuid
+  produtoId          String  @map("produto_id") @db.Uuid
+  quantidade         Decimal @db.Decimal(18, 4)
+  quantidadeRecebida Decimal @default(0) @map("quantidade_recebida") @db.Decimal(18, 4)
+  precoUnitario      Decimal @map("preco_unitario") @db.Decimal(18, 4)
+
+  pedidoCompra PedidoCompra @relation(fields: [pedidoCompraId], references: [id], onDelete: Cascade)
+  produto      Produto      @relation(fields: [produtoId], references: [id], onDelete: Restrict)
+
+  @@unique([pedidoCompraId, produtoId])
+  @@map("pedidos_compra_itens")
+}
+
+// ---------------------------------------------------------------------
+// Clientes (espelho do CRM) e pedidos de venda
+// ---------------------------------------------------------------------
+
+/// Espelho somente leitura dos clientes do CRM Agrogest (fonte da verdade: CRM)
+model ClienteCrm {
+  id              String    @id @default(uuid(7)) @db.Uuid
+  /// UUID do cliente no CRM
+  crmId           String    @unique @map("crm_id") @db.Uuid
+  nome            String    @db.VarChar(150)
+  razaoSocial     String?   @map("razao_social") @db.VarChar(200)
+  cnpj            String?   @db.VarChar(14)
+  cpf             String?   @db.VarChar(11)
+  email           String?   @db.VarChar(160)
+  telefone        String?   @db.VarChar(20)
+  cidade          String?   @db.VarChar(100)
+  uf              String?   @db.VarChar(2)
+  /// SHA-256 dos campos sincronizados (detecção de alterações)
+  hash            String    @db.VarChar(64)
+  removidoNoCrm   Boolean   @default(false) @map("removido_no_crm")
+  sincronizadoEm  DateTime  @map("sincronizado_em") @db.Timestamptz(3)
+  criadoEm        DateTime  @default(now()) @map("criado_em") @db.Timestamptz(3)
+  atualizadoEm    DateTime  @updatedAt @map("atualizado_em") @db.Timestamptz(3)
+
+  pedidos  Pedido[]
+  entradas Entrada[]
+  saidas   Saida[]
+
+  @@index([nome])
+  @@index([cnpj])
+  @@map("crm_clientes")
+}
+
+model Pedido {
+  id                 String       @id @default(uuid(7)) @db.Uuid
+  numero             BigInt       @unique @default(autoincrement())
+  origem             OrigemPedido @default(MANUAL)
+  /// Identificador da venda no sistema de origem (CRM)
+  idExterno          String?      @map("id_externo") @db.VarChar(100)
+  clienteCrmId       String?      @map("cliente_crm_id") @db.Uuid
+  status             StatusPedido @default(RESERVADO)
+  observacao         String?      @db.VarChar(1000)
+  valorTotal         Decimal      @default(0) @map("valor_total") @db.Decimal(18, 2)
+  criadoPorId        String?      @map("criado_por_id") @db.Uuid
+  clienteApiId       String?      @map("cliente_api_id") @db.Uuid
+  confirmadoEm       DateTime?    @map("confirmado_em") @db.Timestamptz(3)
+  canceladoEm        DateTime?    @map("cancelado_em") @db.Timestamptz(3)
+  motivoCancelamento String?      @map("motivo_cancelamento") @db.VarChar(500)
+  criadoEm           DateTime     @default(now()) @map("criado_em") @db.Timestamptz(3)
+  atualizadoEm       DateTime     @updatedAt @map("atualizado_em") @db.Timestamptz(3)
+
+  clienteCrm    ClienteCrm?    @relation(fields: [clienteCrmId], references: [id], onDelete: Restrict)
+  criadoPor     Usuario?       @relation(fields: [criadoPorId], references: [id], onDelete: Restrict)
+  clienteApi    ClienteApi?    @relation(fields: [clienteApiId], references: [id], onDelete: Restrict)
+  itens         PedidoItem[]
+  movimentacoes Movimentacao[]
+
+  @@unique([origem, idExterno])
+  @@index([status])
+  @@index([clienteCrmId])
+  @@map("pedidos")
+}
+
+model PedidoItem {
+  id            String  @id @default(uuid(7)) @db.Uuid
+  pedidoId      String  @map("pedido_id") @db.Uuid
+  produtoId     String  @map("produto_id") @db.Uuid
+  localId       String  @map("local_id") @db.Uuid
+  quantidade    Decimal @db.Decimal(18, 4)
+  precoUnitario Decimal @default(0) @map("preco_unitario") @db.Decimal(18, 4)
+
+  pedido  Pedido             @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  produto Produto            @relation(fields: [produtoId], references: [id], onDelete: Restrict)
+  local   LocalArmazenamento @relation(fields: [localId], references: [id], onDelete: Restrict)
+  reserva Reserva?
+
+  @@unique([pedidoId, produtoId, localId])
+  @@map("pedido_itens")
+}
+
+model Reserva {
+  id           String        @id @default(uuid(7)) @db.Uuid
+  pedidoItemId String        @unique @map("pedido_item_id") @db.Uuid
+  produtoId    String        @map("produto_id") @db.Uuid
+  localId      String        @map("local_id") @db.Uuid
+  quantidade   Decimal       @db.Decimal(18, 4)
+  status       StatusReserva @default(ATIVA)
+  criadoEm     DateTime      @default(now()) @map("criado_em") @db.Timestamptz(3)
+  encerradaEm  DateTime?     @map("encerrada_em") @db.Timestamptz(3)
+
+  pedidoItem PedidoItem         @relation(fields: [pedidoItemId], references: [id], onDelete: Cascade)
+  produto    Produto            @relation(fields: [produtoId], references: [id], onDelete: Restrict)
+  local      LocalArmazenamento @relation(fields: [localId], references: [id], onDelete: Restrict)
+
+  @@index([produtoId, localId, status])
+  @@map("reservas")
+}
+
+// ---------------------------------------------------------------------
+// Inventário e ajustes
+// ---------------------------------------------------------------------
+
+model Inventario {
+  id           String           @id @default(uuid(7)) @db.Uuid
+  numero       BigInt           @unique @default(autoincrement())
+  descricao    String           @db.VarChar(150)
+  status       StatusInventario @default(EM_CONTAGEM)
+  localId      String?          @map("local_id") @db.Uuid
+  categoriaId  String?          @map("categoria_id") @db.Uuid
+  observacao   String?          @db.VarChar(1000)
+  criadoPorId  String           @map("criado_por_id") @db.Uuid
+  iniciadoEm   DateTime         @default(now()) @map("iniciado_em") @db.Timestamptz(3)
+  revisadoEm   DateTime?        @map("revisado_em") @db.Timestamptz(3)
+  finalizadoEm DateTime?        @map("finalizado_em") @db.Timestamptz(3)
+  atualizadoEm DateTime         @updatedAt @map("atualizado_em") @db.Timestamptz(3)
+
+  local     LocalArmazenamento? @relation(fields: [localId], references: [id], onDelete: Restrict)
+  categoria Categoria?          @relation(fields: [categoriaId], references: [id], onDelete: Restrict)
+  criadoPor Usuario             @relation(fields: [criadoPorId], references: [id], onDelete: Restrict)
+  itens     InventarioItem[]
+  ajustes   Ajuste[]
+
+  @@index([status])
+  @@map("inventarios")
+}
+
+model InventarioItem {
+  id                String    @id @default(uuid(7)) @db.Uuid
+  inventarioId      String    @map("inventario_id") @db.Uuid
+  produtoId         String    @map("produto_id") @db.Uuid
+  localId           String    @map("local_id") @db.Uuid
+  /// Saldo do sistema registrado no momento da contagem
+  quantidadeSistema Decimal?  @map("quantidade_sistema") @db.Decimal(18, 4)
+  quantidadeContada Decimal?  @map("quantidade_contada") @db.Decimal(18, 4)
+  divergencia       Decimal?  @db.Decimal(18, 4)
+  contadoPorId      String?   @map("contado_por_id") @db.Uuid
+  contadoEm         DateTime? @map("contado_em") @db.Timestamptz(3)
+
+  inventario Inventario         @relation(fields: [inventarioId], references: [id], onDelete: Cascade)
+  produto    Produto            @relation(fields: [produtoId], references: [id], onDelete: Restrict)
+  local      LocalArmazenamento @relation(fields: [localId], references: [id], onDelete: Restrict)
+  contadoPor Usuario?           @relation(fields: [contadoPorId], references: [id], onDelete: Restrict)
+
+  @@unique([inventarioId, produtoId, localId])
+  @@map("inventario_itens")
+}
+
+model Ajuste {
+  id              String       @id @default(uuid(7)) @db.Uuid
+  numero          BigInt       @unique @default(autoincrement())
+  origem          OrigemAjuste @default(MANUAL)
+  inventarioId    String?      @map("inventario_id") @db.Uuid
+  status          StatusAjuste @default(PENDENTE)
+  justificativa   String       @db.VarChar(1000)
+  solicitadoPorId String       @map("solicitado_por_id") @db.Uuid
+  solicitadoEm    DateTime     @default(now()) @map("solicitado_em") @db.Timestamptz(3)
+  decididoPorId   String?      @map("decidido_por_id") @db.Uuid
+  decididoEm      DateTime?    @map("decidido_em") @db.Timestamptz(3)
+  motivoRejeicao  String?      @map("motivo_rejeicao") @db.VarChar(500)
+
+  inventario    Inventario?   @relation(fields: [inventarioId], references: [id], onDelete: Restrict)
+  solicitadoPor Usuario       @relation("AjusteSolicitante", fields: [solicitadoPorId], references: [id], onDelete: Restrict)
+  decididoPor   Usuario?      @relation("AjusteDecisor", fields: [decididoPorId], references: [id], onDelete: Restrict)
+  itens         AjusteItem[]
+  movimentacao  Movimentacao?
+
+  @@index([status])
+  @@map("ajustes")
+}
+
+model AjusteItem {
+  id                String   @id @default(uuid(7)) @db.Uuid
+  ajusteId          String   @map("ajuste_id") @db.Uuid
+  produtoId         String   @map("produto_id") @db.Uuid
+  localId           String   @map("local_id") @db.Uuid
+  /// Positivo = acréscimo; negativo = baixa
+  quantidadeDelta   Decimal  @map("quantidade_delta") @db.Decimal(18, 4)
+  quantidadeSistema Decimal? @map("quantidade_sistema") @db.Decimal(18, 4)
+  quantidadeContada Decimal? @map("quantidade_contada") @db.Decimal(18, 4)
+
+  ajuste  Ajuste             @relation(fields: [ajusteId], references: [id], onDelete: Cascade)
+  produto Produto            @relation(fields: [produtoId], references: [id], onDelete: Restrict)
+  local   LocalArmazenamento @relation(fields: [localId], references: [id], onDelete: Restrict)
+
+  @@unique([ajusteId, produtoId, localId])
+  @@map("ajuste_itens")
+}
+
+// ---------------------------------------------------------------------
+// Integração com o CRM
+// ---------------------------------------------------------------------
+
+model Integracao {
+  id                     String    @id @default(uuid(7)) @db.Uuid
+  codigo                 String    @unique @db.VarChar(40)
+  nome                   String    @db.VarChar(100)
+  ativo                  Boolean   @default(false)
+  baseUrl                String    @map("base_url") @db.VarChar(300)
+  authHeaderNome         String?   @map("auth_header_nome") @db.VarChar(60)
+  /// Valor cifrado com AES-256-GCM
+  authHeaderValorCifrado String?   @map("auth_header_valor_cifrado")
+  timeoutMs              Int       @default(10000) @map("timeout_ms")
+  intervaloSyncMinutos   Int       @default(15) @map("intervalo_sync_minutos")
+  webhookSaidaAtivo      Boolean   @default(false) @map("webhook_saida_ativo")
+  webhookSaidaUrl        String?   @map("webhook_saida_url") @db.VarChar(300)
+  /// Segredo HMAC para webhooks enviados ao CRM (cifrado)
+  webhookSaidaSegredoCifrado   String? @map("webhook_saida_segredo_cifrado")
+  /// Segredo HMAC para validar webhooks recebidos do CRM (cifrado)
+  webhookEntradaSegredoCifrado String? @map("webhook_entrada_segredo_cifrado")
+  falhasConsecutivas     Int       @default(0) @map("falhas_consecutivas")
+  ultimaSincronizacaoEm  DateTime? @map("ultima_sincronizacao_em") @db.Timestamptz(3)
+  ultimoSucessoEm        DateTime? @map("ultimo_sucesso_em") @db.Timestamptz(3)
+  ultimoErro             String?   @map("ultimo_erro") @db.VarChar(1000)
+  criadoEm               DateTime  @default(now()) @map("criado_em") @db.Timestamptz(3)
+  atualizadoEm           DateTime  @updatedAt @map("atualizado_em") @db.Timestamptz(3)
+
+  execucoes IntegracaoExecucao[]
+  logs      IntegracaoLog[]
+
+  @@map("integracoes")
+}
+
+model IntegracaoExecucao {
+  id             String         @id @default(uuid(7)) @db.Uuid
+  integracaoId   String         @map("integracao_id") @db.Uuid
+  tipo           String         @db.VarChar(40)
+  gatilho        String         @db.VarChar(20)
+  status         StatusExecucao @default(EM_ANDAMENTO)
+  disparadoPorId String?        @map("disparado_por_id") @db.Uuid
+  iniciadoEm     DateTime       @default(now()) @map("iniciado_em") @db.Timestamptz(3)
+  finalizadoEm   DateTime?      @map("finalizado_em") @db.Timestamptz(3)
+  totalRecebidos Int            @default(0) @map("total_recebidos")
+  criados        Int            @default(0)
+  atualizados    Int            @default(0)
+  inalterados    Int            @default(0)
+  removidos      Int            @default(0)
+  invalidos      Int            @default(0)
+  erro           String?        @db.VarChar(1000)
+
+  integracao Integracao      @relation(fields: [integracaoId], references: [id], onDelete: Cascade)
+  logs       IntegracaoLog[]
+
+  @@index([integracaoId, iniciadoEm])
+  @@map("integracao_execucoes")
+}
+
+/// Log técnico das chamadas de integração (sem dados pessoais nos resumos)
+model IntegracaoLog {
+  id           BigInt            @id @default(autoincrement())
+  integracaoId String?           @map("integracao_id") @db.Uuid
+  execucaoId   String?           @map("execucao_id") @db.Uuid
+  direcao      DirecaoIntegracao
+  operacao     String            @db.VarChar(80)
+  metodo       String?           @db.VarChar(10)
+  url          String?           @db.VarChar(500)
+  statusHttp   Int?              @map("status_http")
+  duracaoMs    Int?              @map("duracao_ms")
+  tentativa    Int               @default(1)
+  sucesso      Boolean
+  erro         String?           @db.VarChar(1000)
+  detalhes     Json?
+  criadoEm     DateTime          @default(now()) @map("criado_em") @db.Timestamptz(3)
+
+  integracao Integracao?         @relation(fields: [integracaoId], references: [id], onDelete: SetNull)
+  execucao   IntegracaoExecucao? @relation(fields: [execucaoId], references: [id], onDelete: SetNull)
+
+  @@index([criadoEm])
+  @@index([sucesso, criadoEm])
+  @@map("integracao_logs")
+}
+
+/// Caixa de entrada de webhooks (deduplicação por origem + id do evento)
+model EventoRecebido {
+  id           String               @id @default(uuid(7)) @db.Uuid
+  origem       String               @db.VarChar(40)
+  eventoId     String               @map("evento_id") @db.VarChar(100)
+  tipo         String               @db.VarChar(60)
+  payload      Json
+  status       StatusEventoRecebido @default(RECEBIDO)
+  tentativas   Int                  @default(0)
+  erro         String?              @db.VarChar(1000)
+  recebidoEm   DateTime             @default(now()) @map("recebido_em") @db.Timestamptz(3)
+  processadoEm DateTime?            @map("processado_em") @db.Timestamptz(3)
+
+  @@unique([origem, eventoId])
+  @@index([status])
+  @@map("integracao_eventos_recebidos")
+}
+
+/// Clientes da API de integração (OAuth 2.0 client credentials)
+model ClienteApi {
+  id          String    @id @default(uuid(7)) @db.Uuid
+  nome        String    @db.VarChar(100)
+  clientId    String    @unique @map("client_id") @db.VarChar(60)
+  segredoHash String    @map("segredo_hash") @db.VarChar(255)
+  escopos     String[]
+  ativo       Boolean   @default(true)
+  criadoPorId String    @map("criado_por_id") @db.Uuid
+  criadoEm    DateTime  @default(now()) @map("criado_em") @db.Timestamptz(3)
+  ultimoUsoEm DateTime? @map("ultimo_uso_em") @db.Timestamptz(3)
+  revogadoEm  DateTime? @map("revogado_em") @db.Timestamptz(3)
+
+  criadoPor     Usuario        @relation(fields: [criadoPorId], references: [id], onDelete: Restrict)
+  pedidos       Pedido[]
+  movimentacoes Movimentacao[]
+
+  @@map("clientes_api")
+}
+
+/// Controle de idempotência de requisições que alteram estado
+model ChaveIdempotencia {
+  escopo         String   @db.VarChar(120)
+  chave          String   @db.VarChar(100)
+  hashRequisicao String   @map("hash_requisicao") @db.VarChar(64)
+  concluida      Boolean  @default(false)
+  statusHttp     Int?     @map("status_http")
+  resposta       Json?
+  criadoEm       DateTime @default(now()) @map("criado_em") @db.Timestamptz(3)
+  expiraEm       DateTime @map("expira_em") @db.Timestamptz(3)
+
+  @@id([escopo, chave])
+  @@index([expiraEm])
+  @@map("chaves_idempotencia")
+}
+
+// ---------------------------------------------------------------------
+// Fila de processamento (outbox transacional)
+// ---------------------------------------------------------------------
+
+model Tarefa {
+  id                 BigInt       @id @default(autoincrement())
+  tipo               String       @db.VarChar(60)
+  payload            Json
+  status             StatusTarefa @default(PENDENTE)
+  tentativas         Int          @default(0)
+  maxTentativas      Int          @default(8) @map("max_tentativas")
+  proximaTentativaEm DateTime     @default(now()) @map("proxima_tentativa_em") @db.Timestamptz(3)
+  travadaEm          DateTime?    @map("travada_em") @db.Timestamptz(3)
+  ultimoErro         String?      @map("ultimo_erro") @db.VarChar(2000)
+  /// Evita tarefas duplicadas pendentes (ex.: uma sincronização por vez)
+  chaveUnica         String?      @map("chave_unica") @db.VarChar(120)
+  criadoEm           DateTime     @default(now()) @map("criado_em") @db.Timestamptz(3)
+  concluidaEm        DateTime?    @map("concluida_em") @db.Timestamptz(3)
+
+  @@index([status, proximaTentativaEm])
+  @@map("tarefas")
+}
+
+// ---------------------------------------------------------------------
+// Notificações e configurações
+// ---------------------------------------------------------------------
+
+model Notificacao {
+  id                String          @id @default(uuid(7)) @db.Uuid
+  tipo              TipoNotificacao
+  severidade        Severidade      @default(ALERTA)
+  titulo            String          @db.VarChar(150)
+  mensagem          String          @db.VarChar(1000)
+  entidade          String?         @db.VarChar(60)
+  entidadeId        String?         @map("entidade_id") @db.VarChar(100)
+  link              String?         @db.VarChar(300)
+  /// Permissão necessária para visualizar a notificação
+  permissaoAlvo     String          @map("permissao_alvo") @db.VarChar(60)
+  /// Evita repetir o mesmo alerta enquanto não resolvido (índice único parcial)
+  chaveDeduplicacao String?         @map("chave_deduplicacao") @db.VarChar(150)
+  resolvida         Boolean         @default(false)
+  resolvidaEm       DateTime?       @map("resolvida_em") @db.Timestamptz(3)
+  criadoEm          DateTime        @default(now()) @map("criado_em") @db.Timestamptz(3)
+
+  leituras NotificacaoLeitura[]
+
+  @@index([criadoEm])
+  @@index([tipo, resolvida])
+  @@map("notificacoes")
+}
+
+model NotificacaoLeitura {
+  notificacaoId String   @map("notificacao_id") @db.Uuid
+  usuarioId     String   @map("usuario_id") @db.Uuid
+  lidaEm        DateTime @default(now()) @map("lida_em") @db.Timestamptz(3)
+
+  notificacao Notificacao @relation(fields: [notificacaoId], references: [id], onDelete: Cascade)
+  usuario     Usuario     @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@id([notificacaoId, usuarioId])
+  @@index([usuarioId])
+  @@map("notificacao_leituras")
+}
+
+model Configuracao {
+  chave           String   @id @db.VarChar(60)
+  valor           Json
+  atualizadoPorId String?  @map("atualizado_por_id") @db.Uuid
+  atualizadoEm    DateTime @updatedAt @map("atualizado_em") @db.Timestamptz(3)
+
+  @@map("configuracoes")
+}
