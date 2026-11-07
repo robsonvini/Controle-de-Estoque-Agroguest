@@ -4,6 +4,7 @@ import { DocumentBuilder, SwaggerModule, type OpenAPIObject } from '@nestjs/swag
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import { cleanupOpenApiDoc } from 'nestjs-zod';
+import type { NextFunction, Request, Response } from 'express';
 import { env } from './config/env';
 
 // BigInt (números sequenciais) é serializado como texto no JSON
@@ -34,6 +35,10 @@ export function configurarApp(app: INestApplication) {
   );
   app.use(cookieParser());
   express.useBodyParser('json', { limit: '1mb' });
+  express.use((_req: Request, res: Response, next: NextFunction) => {
+    res.setHeader('Cache-Control', 'no-store');
+    next();
+  });
   app.enableCors({
     origin: env.WEB_ORIGIN.split(',').map((o) => o.trim()),
     credentials: true,
