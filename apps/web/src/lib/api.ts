@@ -57,6 +57,7 @@ export async function renovarSessao(): Promise<boolean> {
         method: 'POST',
         credentials: 'same-origin',
         headers: { 'X-CSRF-Token': csrf },
+        cache: 'no-store',
       });
       if (r.ok) {
         const dados = await r.json();
@@ -137,6 +138,7 @@ async function executar(
     headers: cabecalhos,
     body: corpo,
     credentials: 'same-origin',
+    cache: 'no-store',
     signal: op.sinal,
   });
   if (r.status === 401 && tentarRenovar) {
@@ -180,6 +182,7 @@ export async function login(email: string, senha: string) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, senha }),
     credentials: 'same-origin',
+    cache: 'no-store',
   });
   if (!r.ok) throw await converterErro(r);
   const dados = await r.json();
