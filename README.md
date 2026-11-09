@@ -10,6 +10,14 @@ por API, com idempotência e webhooks assinados.
 - **Compartilhado:** schemas Zod 4, a mesma validação no navegador e no servidor.
 - **Nuvem:** AWS (ECS Fargate, RDS, S3, ALB com WAF, Secrets Manager e CloudWatch), via Terraform.
 
+## Sistema publicado
+
+Acesse <https://estoque-web-fyeb.onrender.com>. O acesso exige login, e as credenciais são
+fornecidas individualmente pelo responsável do projeto.
+
+O sistema está no plano gratuito do Render, que hiberna por inatividade: o primeiro acesso pode
+levar alguns minutos.
+
 ## Início rápido (desenvolvimento)
 
 Requisitos: Node.js 22.12 ou superior (testado no 24), Docker e Git.

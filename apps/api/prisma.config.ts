@@ -5,7 +5,8 @@ export default defineConfig({
   schema: 'prisma/schema.prisma',
   migrations: {
     path: 'prisma/migrations',
-    seed: '/app/node_modules/.bin/tsx prisma/seed.ts',
+    // `node --import` resolve o tsx pelo node_modules: funciona sem PATH ajustado (Render) e fora de /app (CI)
+    seed: 'node --import tsx prisma/seed.ts',
   },
   datasource: {
     // `prisma generate` (build de imagem) não acessa o banco; migrate/seed exigem DATABASE_URL real
